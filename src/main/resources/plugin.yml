@@ -1,0 +1,9 @@
+name: VLandsUtilities
+version: '${project.version}'
+main: net.vlands.Main
+api-version: 1.18
+prefix: VLands Utilities
+softdepend: [ AquaCore, PlaceholderAPI, StatsSB, EssentialsX ]
+authors: [ V_Link, minion325 ]
+description: VLands Network - Utility Plugin
+website: https://vlands.net/
