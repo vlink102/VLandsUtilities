@@ -17,7 +17,11 @@ public class CooldownManager {
     }
 
     public boolean isOnCooldown(Player player, String cooldown, long duration) {
-        return  getTimePassed(player, cooldown) < duration;
+        return getTimePassed(player, cooldown) < duration;
+    }
+
+    public long getRemainingTime(Player player, String cooldown, long duration) {
+        return duration - getTimePassed(player, cooldown);
     }
 
     public long getLastUse(Player player, String cooldown) {
@@ -33,7 +37,7 @@ public class CooldownManager {
     }
 
     public void resetCooldown(Player player, String cooldown) {
-        setLastUse(player, cooldown,0L);
+        setLastUse(player, cooldown, 0L);
     }
 
 }

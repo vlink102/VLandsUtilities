@@ -24,6 +24,9 @@ public class PlayerData {
     @Getter
     @Setter
     private int skillPoints;
+    @Getter
+    @Setter
+    private boolean ignoringCooldowns;
 
     private final Map<String, Long> cooldownsLastUse;
 
@@ -32,7 +35,7 @@ public class PlayerData {
         this.uuid = uuid;
         this.skillPoints = playerDataSnapShot.skillPoints;
         this.accuracy = playerDataSnapShot.accuracy;
-        ;
+        this.ignoringCooldowns = playerDataSnapShot.ignoringCooldowns;
         this.killEffect = playerDataSnapShot.killEffect;
         this.cooldownsLastUse = new HashMap<>(playerDataSnapShot.cooldownsLastUse);
     }
@@ -78,6 +81,7 @@ public class PlayerData {
         private String killEffect;
         private double accuracy;
         private int skillPoints;
+        private boolean ignoringCooldowns;
         private Map<String, Long> cooldownsLastUse;
 
         private PlayerDataSnapShot(PlayerData playerData) {
@@ -86,6 +90,7 @@ public class PlayerData {
             this.killEffect = playerData.killEffect;
             this.accuracy = playerData.accuracy;
             this.skillPoints = playerData.skillPoints;
+            this.ignoringCooldowns = playerData.ignoringCooldowns;
             this.cooldownsLastUse = new HashMap<>(playerData.cooldownsLastUse);
         }
     }
