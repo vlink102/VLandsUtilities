@@ -5,15 +5,14 @@ import net.vlands.data.player.PlayerDataManager;
 import org.bukkit.entity.Player;
 
 public class CooldownManager {
-
-    private PlayerDataManager pdm;
+    private final PlayerDataManager pdm;
 
     public CooldownManager(VLandsUtilities plugin) {
-        this.pdm = plugin.getPlayerDataManager();
+        pdm = plugin.getPlayerDataManager();
     }
 
     public long getTimePassed(Player player, String cooldown) {
-        return System.currentTimeMillis() - this.pdm.getPlayerData(player).getCooldownLastUse(cooldown);
+        return System.currentTimeMillis() - pdm.getPlayerData(player).getCooldownLastUse(cooldown);
     }
 
     public boolean isOnCooldown(Player player, String cooldown, long duration) {
@@ -29,11 +28,11 @@ public class CooldownManager {
     }
 
     public void setLastUse(Player player, String cooldown, long time) {
-        this.pdm.getPlayerData(player).setCooldownLastUse(cooldown, time);
+        pdm.getPlayerData(player).setCooldownLastUse(cooldown, time);
     }
 
     public void setLastUseToNow(Player player, String cooldown) {
-        this.pdm.getPlayerData(player).setCooldownLastUse(cooldown, System.currentTimeMillis());
+        pdm.getPlayerData(player).setCooldownLastUse(cooldown, System.currentTimeMillis());
     }
 
     public void resetCooldown(Player player, String cooldown) {

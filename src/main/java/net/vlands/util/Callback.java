@@ -3,6 +3,7 @@ package net.vlands.util;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Callback<T> {
 
     private final List<Runnable> runnables = new ArrayList<>();

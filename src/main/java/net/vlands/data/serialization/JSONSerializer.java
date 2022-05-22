@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class JSONSerializer {
 
-    private static Gson gson = new GsonBuilder().registerTypeAdapter(Map.class, new CooldownMapJSONDeserialzer()).create();
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(Map.class, new CooldownMapJSONDeserialzer()).create();
 
     public static String serializeCooldownMap(Map<String, Long> cooldownMap) {
         return gson.toJson(cooldownMap);

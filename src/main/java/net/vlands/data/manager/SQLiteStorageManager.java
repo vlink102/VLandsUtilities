@@ -22,23 +22,20 @@ public class SQLiteStorageManager extends DataStorageManager {
     }
 
     private Connection connection;
-    private File file;
-    private String dataTableName = "vlands_utilities";
-    private String playersTableName = "vlands_players";
+    private final String dataTableName = "vlands_utilities";
+    private final String playersTableName = "vlands_players";
 
     public SQLiteStorageManager(File dbFile) {
-        this.file = dbFile;
-        if (!this.file.getParentFile().isDirectory()) {
-            if (!this.file.getParentFile().mkdirs()) {
-                throw new UnsupportedOperationException("Could not create the following directory: " + this.file.getParentFile().getAbsolutePath());
+        if (!dbFile.getParentFile().isDirectory()) {
+            if (!dbFile.getParentFile().mkdirs()) {
+                throw new UnsupportedOperationException("Could not create the following directory: " + dbFile.getParentFile().getAbsolutePath());
             }
         }
         try {
-            if (!this.file.exists())
-                this.file.createNewFile();
+            if (!dbFile.exists()) dbFile.createNewFile();
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + this.file);
-            Logger.getGlobal().info("Opened database at " + this.file + " successfully");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile);
+            Logger.getGlobal().info("Opened database at " + dbFile + " successfully");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,19 +52,15 @@ public class SQLiteStorageManager extends DataStorageManager {
             statement.executeUpdate(createDataTable);
             statement.executeUpdate(createPlayersTable);
 
-            //getting columns in table
             Set<String> currentColumnsInTable = new HashSet<>();
             ResultSet set = statement.executeQuery(getColumns);
             while (set.next()) {
                 currentColumnsInTable.add(set.getString("NAME"));
             }
 
-            //adding any columns we need
             for (String columnName : COLUMNS.keySet()) {
-                if (currentColumnsInTable.contains(columnName))
-                    continue;
+                if (currentColumnsInTable.contains(columnName)) continue;
 
-                //creating the statment
                 String stmt = StringUtils.replace(StringUtils.replace(createColumns, "%column%", columnName), "%type%", COLUMNS.get(columnName));
                 statement.executeUpdate(stmt);
             }

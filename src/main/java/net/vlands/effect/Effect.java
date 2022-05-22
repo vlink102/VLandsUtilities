@@ -17,6 +17,6 @@ public abstract class Effect {
         this.rawName = ChatColor.stripColor(fancyName);
     }
 
-    public abstract void playEffect(Player player, Player target);
+    public abstract void playEffect(Player killer, Player victim);
 
 }

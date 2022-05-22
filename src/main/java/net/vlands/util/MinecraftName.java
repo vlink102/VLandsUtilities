@@ -1,9 +1,10 @@
 package net.vlands.util;
 
+@SuppressWarnings("unused")
 public class MinecraftName {
 
-    private String name;
-    private String lowerCase;
+    private final String name;
+    private final String lowerCase;
 
     public MinecraftName(String name) {
         this.name = name;

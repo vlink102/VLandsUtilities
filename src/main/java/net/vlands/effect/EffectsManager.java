@@ -11,10 +11,10 @@ import java.util.Set;
 
 public class EffectsManager {
 
-    private VLandsUtilities plugin;
-    private Map<String, Effect> effectsMap = new HashMap<>();
+    private final VLandsUtilities plugin;
+    private final Map<String, Effect> effectsMap = new HashMap<>();
 
-    private Effect defaultEffect = new NoEffect();
+    private final Effect defaultEffect = new NoEffect();
 
     public EffectsManager(VLandsUtilities plugin) {
         this.plugin = plugin;
@@ -47,7 +47,7 @@ public class EffectsManager {
         }
 
         @Override
-        public void playEffect(Player player, Player target) {
+        public void playEffect(Player killer, Player victim) {
             //do nothing
         }
     }
