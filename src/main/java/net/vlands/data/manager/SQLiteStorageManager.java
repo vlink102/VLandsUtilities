@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class SQLiteDataManager extends DataManager {
+public class SQLiteStorageManager extends DataStorageManager {
 
     private static final Map<String, String> COLUMNS = new HashMap<>();
 
@@ -23,7 +23,7 @@ public class SQLiteDataManager extends DataManager {
     private String dataTableName = "vlands_utilities";
     private String playersTableName = "vlands_players";
 
-    public SQLiteDataManager(File dbFile) {
+    public SQLiteStorageManager(File dbFile) {
         this.file = dbFile;
         if (!this.file.getParentFile().isDirectory()) {
             if (!this.file.getParentFile().mkdirs()) {

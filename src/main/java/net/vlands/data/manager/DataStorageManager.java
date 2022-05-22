@@ -4,7 +4,7 @@ import net.vlands.data.player.PlayerData.PlayerDataSnapShot;
 
 import java.util.*;
 
-public abstract class DataManager {
+public abstract class DataStorageManager {
 
     public abstract void init();
 
