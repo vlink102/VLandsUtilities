@@ -11,9 +11,9 @@ import java.util.UUID;
 public class PlayerData {
 
     @Getter
-    private String name;
+    private final String name;
     @Getter
-    private UUID uuid;
+    private final UUID uuid;
     @Getter@Setter
     private String killEffect;
     @Getter@Setter
@@ -21,11 +21,23 @@ public class PlayerData {
     @Getter@Setter
     private int skillPoints;
 
-    private Map<String, Long> cooldownsLastUse;
+    private final Map<String, Long> cooldownsLastUse;
 
-    protected PlayerData(UUID uuid, String name) {
-        this.uuid = uuid;
+    protected PlayerData(String name, UUID uuid,PlayerDataSnapShot playerDataSnapShot) {
         this.name = name;
+        this.uuid = uuid;
+        this.skillPoints = playerDataSnapShot.skillPoints;
+        this.accuracy = playerDataSnapShot.accuracy;;
+        this.killEffect = playerDataSnapShot.killEffect;
+        this.cooldownsLastUse = new HashMap<>(playerDataSnapShot.cooldownsLastUse);
+    }
+
+    public void addSkillPoints(int amount) {
+        this.skillPoints += amount;
+    }
+
+    public void removeSkillPoints(int amount) {
+        this.skillPoints -= amount;
     }
 
     public void setCooldownLastUse(String cooldown, long time) {
@@ -36,6 +48,10 @@ public class PlayerData {
         if (this.cooldownsLastUse.containsKey(cooldown))
             return this.cooldownsLastUse.get(cooldown);
         return 0;
+    }
+
+    public PlayerDataSnapShot snapshot() {
+        return new PlayerDataSnapShot(this);
     }
 
     /**

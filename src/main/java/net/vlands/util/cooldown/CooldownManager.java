@@ -1,15 +1,15 @@
 package net.vlands.util.cooldown;
 
-import net.vlands.Main;
+import net.vlands.VLandsUtilities;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 public class CooldownManager {
-    private final Main plugin;
+    private final VLandsUtilities plugin;
 
-    public CooldownManager(Main plugin) {
+    public CooldownManager(VLandsUtilities plugin) {
         this.plugin = plugin;
     }
 

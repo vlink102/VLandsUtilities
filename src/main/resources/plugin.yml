@@ -1,6 +1,6 @@
 name: VLandsUtilities
 version: '${project.version}'
-main: net.vlands.Main
+main: net.vlands.VLandsUtilities
 api-version: 1.18
 prefix: VLands Utilities
 softdepend: [ AquaCore, PlaceholderAPI, StatsSB, EssentialsX ]

@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
-public final class Main extends JavaPlugin {
+public final class VLandsUtilities extends JavaPlugin {
 
     @Getter
     private PlayerDataManager playerDataManager;
@@ -18,6 +18,7 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        this.setupDataManagers();
     }
 
     private void setupDataManagers() {

@@ -1,6 +1,8 @@
 package net.vlands.data.manager;
 
-import net.vlands.data.player.PlayerData;
+import net.vlands.data.player.PlayerData.PlayerDataSnapShot;
+import net.vlands.data.serialization.JSONSerializer;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.sql.*;
@@ -52,10 +54,21 @@ public class SQLiteStorageManager extends DataStorageManager {
             statement.executeUpdate(createDataTable);
             statement.executeUpdate(createPlayersTable);
 
-            List<String> currentColumnsInTable = new ArrayList<>();
+            //getting columns in table
+            Set<String> currentColumnsInTable = new HashSet<>();
             ResultSet set = statement.executeQuery(getColumns);
             while (set.next()) {
                 currentColumnsInTable.add(set.getString("NAME"));
+            }
+
+            //adding any columns we need
+            for (String columnName : COLUMNS.keySet()) {
+                if (currentColumnsInTable.contains(columnName))
+                    continue;
+
+                //creating the statment
+                String stmt = StringUtils.replace(StringUtils.replace(createColumns, "%column%", columnName), "%type%", COLUMNS.get(columnName));
+                statement.executeUpdate(stmt);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,17 +88,109 @@ public class SQLiteStorageManager extends DataStorageManager {
     }
 
     @Override
-    public void savePlayerDataMultiple(Set<PlayerData.PlayerDataSnapShot> data) {
-
+    public void savePlayerDataMultiple(Set<PlayerDataSnapShot> data) {
+        String sql = "UPDATE " + dataTableName + " SET killeffect=?,accuracy=?,skillpoints=?,cooldowns=? WHERE UUID=?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            for (PlayerDataSnapShot datum : data) {
+                statement.setString(1, datum.getKillEffect());
+                statement.setDouble(2, datum.getAccuracy());
+                statement.setInt(3, datum.getSkillPoints());
+                statement.setString(4, JSONSerializer.serializeCooldownMap(datum.getCooldownsLastUse()));
+                statement.setString(5, datum.getUuid().toString());
+                statement.addBatch();
+            }
+            statement.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public Map<UUID, PlayerData.PlayerDataSnapShot> getDataFromUUIDMultiple(Set<UUID> uuids) {
-        return null;
+    public Map<UUID, PlayerDataSnapShot> getDataFromUUIDMultiple(List<UUID> uuids) {
+        String sql = "SELECT " + dataTableName + ".UUID," + playersTableName + ".NAME,killeffect,accuracy" +
+                ",skillponts,cooldowns FROM " + dataTableName + " LEFT JOIN " + playersTableName + " ON " +
+                dataTableName + ".UUID=" + playersTableName + ".UUID WHERE " + getWhereConditionForUUID(uuids.size());
+        try (PreparedStatement statement = this.connection.prepareStatement(sql)) {
+            Map<UUID, PlayerDataSnapShot> dataMap = new HashMap<>();
+
+            for (int i = 0; i < uuids.size(); i++)
+                statement.setString(i + 1, uuids.get(i).toString());
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
+                String name = resultSet.getString("NAME");
+                String killeffect = resultSet.getString("killeffect");
+                int skillpoints = resultSet.getInt("skillpoints");
+                double accuracy = resultSet.getDouble("accuracy");
+                Map<String, Long> cooldownMap = JSONSerializer.deserializeCooldownMap(resultSet.getString("cooldowns"));
+                dataMap.put(uuid, new PlayerDataSnapShot(name, uuid, killeffect, accuracy, skillpoints, cooldownMap));
+            }
+
+            return dataMap;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String getWhereConditionForUUID(int num) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < num; i++) {
+            stringBuilder.append(dataTableName).append(".UUID=?");
+            if (i == num - 1)
+                stringBuilder.append(";");
+            else
+                stringBuilder.append("OR ");
+        }
+        return stringBuilder.toString();
     }
 
     @Override
-    public Map<String, PlayerData.PlayerDataSnapShot> getDataFromNameMultiple(Set<String> names) {
-        return null;
+    public Map<String, PlayerDataSnapShot> getDataFromNameMultiple(List<String> names) {
+        String sql = "SELECT " + dataTableName + ".UUID," + playersTableName + ".NAME,killeffect,accuracy" +
+                ",skillponts,cooldowns FROM " + dataTableName + " LEFT JOIN " + playersTableName + " ON " +
+                dataTableName + ".UUID=" + playersTableName + ".UUID WHERE " + getWhereConditionForNames(names.size());
+        try (PreparedStatement statement = this.connection.prepareStatement(sql)) {
+            Map<String, PlayerDataSnapShot> dataMap = new HashMap<>();
+
+            for (int i = 0; i < names.size(); i++)
+                statement.setString(i + 1, names.get(i));
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
+                String name = resultSet.getString("NAME");
+                String killeffect = resultSet.getString("killeffect");
+                int skillpoints = resultSet.getInt("skillpoints");
+                double accuracy = resultSet.getDouble("accuracy");
+                Map<String, Long> cooldownMap = JSONSerializer.deserializeCooldownMap(resultSet.getString("cooldowns"));
+                dataMap.put(name.toLowerCase(), new PlayerDataSnapShot(name, uuid, killeffect, accuracy, skillpoints, cooldownMap));
+            }
+
+            return dataMap;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String getWhereConditionForNames(int num) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < num; i++) {
+            stringBuilder.append(dataTableName)
+                    .append(".UUID=SELECT UUID FROM ")
+                    .append(playersTableName)
+                    .append(" WHERE NAME=?");
+            if (i == num - 1)
+                stringBuilder.append(";");
+            else
+                stringBuilder.append("OR ");
+        }
+        return stringBuilder.toString();
     }
 }

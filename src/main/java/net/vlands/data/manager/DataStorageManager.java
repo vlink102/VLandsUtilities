@@ -17,15 +17,16 @@ public abstract class DataStorageManager {
     public abstract void savePlayerDataMultiple(Set<PlayerDataSnapShot> data);
 
     public PlayerDataSnapShot getDataFromUUID(UUID uuid) {
-        return this.getDataFromUUIDMultiple(Collections.singleton(uuid)).get(uuid);
+        return this.getDataFromUUIDMultiple(Collections.singletonList(uuid)).get(uuid);
     }
 
     public PlayerDataSnapShot getDataFromName(String name) {
-        return this.getDataFromNameMultiple(Collections.singleton(name)).get(name);
+        name = name.toLowerCase();
+        return this.getDataFromNameMultiple(Collections.singletonList(name)).get(name);
     }
 
-    public abstract Map<UUID, PlayerDataSnapShot> getDataFromUUIDMultiple(Set<UUID> uuids);
+    public abstract Map<UUID, PlayerDataSnapShot> getDataFromUUIDMultiple(List<UUID> uuids);
 
-    public abstract Map<String, PlayerDataSnapShot> getDataFromNameMultiple(Set<String> names);
+    public abstract Map<String, PlayerDataSnapShot> getDataFromNameMultiple(List<String> names);
 
 }
