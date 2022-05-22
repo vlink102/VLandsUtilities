@@ -1,6 +1,7 @@
 package net.vlands;
 
 import lombok.Getter;
+import net.vlands.data.CooldownManager;
 import net.vlands.data.manager.DataStorageManager;
 import net.vlands.data.manager.SQLiteStorageManager;
 import net.vlands.data.player.PlayerDataManager;
@@ -15,15 +16,20 @@ public final class VLandsUtilities extends JavaPlugin {
     private PlayerDataManager playerDataManager;
     @Getter
     private DataStorageManager dataStorageManager;
+    @Getter
+    private CooldownManager cooldownManager;
 
     @Override
     public void onEnable() {
-        this.setupDataManagers();
+        this.setupManagers();
     }
 
-    private void setupDataManagers() {
+    private void setupManagers() {
         this.dataStorageManager = new SQLiteStorageManager(new File(this.getDataFolder(), "database.db"));
+
         this.playerDataManager = new PlayerDataManager(this);
         Bukkit.getPluginManager().registerEvents(this.playerDataManager, this);
+
+        this.cooldownManager = new CooldownManager(this);
     }
 }
