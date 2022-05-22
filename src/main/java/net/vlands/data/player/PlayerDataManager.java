@@ -17,10 +17,10 @@ import java.util.UUID;
 
 public class PlayerDataManager implements Listener {
 
-    private VLandsUtilities plugin;
+    private final VLandsUtilities plugin;
 
-    private Map<UUID, PlayerData> uuidPlayerDataMap = new HashMap<>();
-    private Map<MinecraftName, UUID> nameUUIDMap = new HashMap<>();
+    private final Map<UUID, PlayerData> uuidPlayerDataMap = new HashMap<>();
+    private final Map<MinecraftName, UUID> nameUUIDMap = new HashMap<>();
 
     public PlayerDataManager(VLandsUtilities plugin) {
         this.plugin = plugin;
@@ -35,8 +35,7 @@ public class PlayerDataManager implements Listener {
         nameUUIDMap.put(new MinecraftName(event.getPlayer().getName()), event.getPlayer().getUniqueId());
 
         //data already loaded
-        if (uuidPlayerDataMap.containsKey(event.getPlayer().getUniqueId()))
-            return;
+        if (uuidPlayerDataMap.containsKey(event.getPlayer().getUniqueId())) return;
 
 
         PlayerDataSnapShot snapShot = this.plugin.getDataStorageManager().getDataFromUUID(event.getPlayer().getUniqueId());
@@ -68,8 +67,8 @@ public class PlayerDataManager implements Listener {
 
     /**
      * Used for player data for offline players
-     * @param name
-     * @return
+     * @param name Offline player name
+     * @return Callback null
      */
     public Callback<PlayerData> getPlayerData(String name) {
         return Callback.withResult(null);
@@ -77,8 +76,8 @@ public class PlayerDataManager implements Listener {
 
     /**
      * Used for player data for offline players
-     * @param uuid
-     * @return
+     * @param uuid Offline player uuid
+     * @return Callback null
      */
     public Callback<PlayerData> getPlayerData(UUID uuid) {
         return Callback.withResult(null);

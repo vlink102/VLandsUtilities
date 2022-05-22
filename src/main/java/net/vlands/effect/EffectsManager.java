@@ -2,12 +2,11 @@ package net.vlands.effect;
 
 import net.vlands.VLandsUtilities;
 import net.vlands.data.player.PlayerData;
+import net.vlands.effect.effects.Angry;
+import net.vlands.util.ClassEnumerator;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class EffectsManager {
 
@@ -22,6 +21,19 @@ public class EffectsManager {
 
     public void addEffect(Effect effect) {
         this.effectsMap.put(effect.getName(),effect);
+    }
+
+    public void registerAllEffects() {
+        List<Class<?>> discoveredClasses = ClassEnumerator.getPackageClasses(Angry.class.getPackage());
+        discoveredClasses.forEach(clazz -> {
+            if (Effect.class.isAssignableFrom(clazz)) {
+                try {
+                    plugin.getEffectsManager().addEffect(((Effect) clazz.newInstance()));
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public Set<Effect> getEffects() {

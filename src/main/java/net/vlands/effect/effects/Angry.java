@@ -11,6 +11,7 @@ public class Angry extends Effect {
 
     public Angry(VLandsUtilities plugin) {
         super("angry", "&cAngry");
+        plugin.getEffectsManager().addEffect(this);
     }
 
     @Override

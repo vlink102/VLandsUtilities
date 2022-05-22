@@ -3,6 +3,7 @@ package net.vlands.data.player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.vlands.effect.Effect;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,30 +41,52 @@ public class PlayerData {
         this.cooldownsLastUse = new HashMap<>(playerDataSnapShot.cooldownsLastUse);
     }
 
+    // SKILL POINTS SECTION
     public void addSkillPoints(int amount) {
         this.skillPoints += amount;
     }
-
     public void removeSkillPoints(int amount) {
         this.skillPoints -= amount;
     }
-
-    public void setCooldownLastUse(String cooldown, long time) {
-        if (time <= 0)
-            this.cooldownsLastUse.remove(cooldown);
-        else
-            this.cooldownsLastUse.put(cooldown, time);
+    public void resetSkillPoints() {
+        this.skillPoints = 0;
     }
 
+    // ACCURACY SECTION
+    public void resetAccuracy() {
+        this.accuracy = 0.00D;
+    }
+
+    // IGNORING COOLDOWNS SECTION
+    public void toggleIgnoreCooldown() {
+        this.ignoringCooldowns = !this.ignoringCooldowns;
+    }
+    public void setIgnoreCooldown(boolean ignoreCooldown) {
+        this.ignoringCooldowns = ignoreCooldown;
+    }
+    public boolean isIgnoringCooldown() {
+        return this.ignoringCooldowns;
+    }
+
+    // COOLDOWN SECTION
+    public void setCooldownLastUse(String cooldown, long time) {
+        if (time <= 0) this.cooldownsLastUse.remove(cooldown);
+        else this.cooldownsLastUse.put(cooldown, time);
+    }
     public long getCooldownLastUse(String cooldown) {
-        if (this.cooldownsLastUse.containsKey(cooldown))
-            return this.cooldownsLastUse.get(cooldown);
+        if (this.cooldownsLastUse.containsKey(cooldown)) return this.cooldownsLastUse.get(cooldown);
         return 0;
     }
 
-    public Set<String> getCooldowns() {
+    public Set<String> getCooldownList() {
         return this.cooldownsLastUse.keySet();
     }
+    public Map<String, Long> getCooldowns() {
+        return this.cooldownsLastUse;
+    }
+
+    // KILL EFFECTS SECTION
+
 
     public PlayerDataSnapShot snapshot() {
         return new PlayerDataSnapShot(this);
