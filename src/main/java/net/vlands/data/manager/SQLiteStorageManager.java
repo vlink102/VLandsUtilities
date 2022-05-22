@@ -118,17 +118,9 @@ public class SQLiteStorageManager extends DataStorageManager {
 
             ResultSet resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
-                String name = resultSet.getString("NAME");
-                String killeffect = resultSet.getString("killeffect");
-                int skillpoints = resultSet.getInt("skillpoints");
-                double accuracy = resultSet.getDouble("accuracy");
-                Map<String, Long> cooldownMap = JSONSerializer.deserializeCooldownMap(resultSet.getString("cooldowns"));
-                dataMap.put(uuid, new PlayerDataSnapShot(name, uuid, killeffect, accuracy, skillpoints, cooldownMap));
+            for (PlayerDataSnapShot snapShot : this.convertResultSetToSnaphots(resultSet)) {
+                dataMap.put(snapShot.getUuid(), snapShot);
             }
-
-            System.out.println(dataMap);
             return dataMap;
 
         } catch (SQLException e) {
@@ -162,14 +154,8 @@ public class SQLiteStorageManager extends DataStorageManager {
 
             ResultSet resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
-                String name = resultSet.getString("NAME");
-                String killeffect = resultSet.getString("killeffect");
-                int skillpoints = resultSet.getInt("skillpoints");
-                double accuracy = resultSet.getDouble("accuracy");
-                Map<String, Long> cooldownMap = JSONSerializer.deserializeCooldownMap(resultSet.getString("cooldowns"));
-                dataMap.put(name.toLowerCase(), new PlayerDataSnapShot(name, uuid, killeffect, accuracy, skillpoints, cooldownMap));
+            for (PlayerDataSnapShot snapShot : this.convertResultSetToSnaphots(resultSet)) {
+                dataMap.put(snapShot.getName().toLowerCase(), snapShot);
             }
 
             return dataMap;
@@ -193,5 +179,19 @@ public class SQLiteStorageManager extends DataStorageManager {
                 stringBuilder.append("OR ");
         }
         return stringBuilder.toString();
+    }
+
+    Set<PlayerDataSnapShot> convertResultSetToSnaphots(ResultSet resultSet) throws SQLException {
+        Set<PlayerDataSnapShot> toReturn = new HashSet<>();
+        while (resultSet.next()) {
+            UUID uuid = UUID.fromString(resultSet.getString("UUID"));
+            String name = resultSet.getString("NAME");
+            String killeffect = resultSet.getString("killeffect");
+            int skillpoints = resultSet.getInt("skillpoints");
+            double accuracy = resultSet.getDouble("accuracy");
+            Map<String, Long> cooldownMap = JSONSerializer.deserializeCooldownMap(resultSet.getString("cooldowns"));
+            toReturn.add(new PlayerDataSnapShot(name, uuid, killeffect, accuracy, skillpoints, cooldownMap));
+        }
+        return toReturn;
     }
 }
