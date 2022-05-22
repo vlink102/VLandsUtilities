@@ -1,4 +1,24 @@
 package net.vlands.data.player;
 
-public class PlayerDataManager {
+import net.vlands.util.Callback;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+
+import java.util.UUID;
+
+public class PlayerDataManager implements Listener {
+
+
+    public PlayerData getPlayerData(Player player) {
+        return null;
+    }
+
+    public Callback<PlayerData> getPlayerData(String name) {
+        return Callback.withResult(null);
+    }
+
+    public Callback<PlayerData> getPlayerData(UUID uuid) {
+        return Callback.withResult(null);
+    }
+
 }
