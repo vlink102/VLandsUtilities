@@ -12,12 +12,12 @@ public class CooldownManager {
         this.pdm = plugin.getPlayerDataManager();
     }
 
-    public long getRemainingTime(Player player, String cooldown) {
+    public long getTimePassed(Player player, String cooldown) {
         return System.currentTimeMillis() - this.pdm.getPlayerData(player).getCooldownLastUse(cooldown);
     }
 
-    public boolean isOnCooldown(Player player, String cooldown) {
-        return  getRemainingTime(player, cooldown) <= 0;
+    public boolean isOnCooldown(Player player, String cooldown, long duration) {
+        return  getTimePassed(player, cooldown) < duration;
     }
 
     public long getLastUse(Player player, String cooldown) {

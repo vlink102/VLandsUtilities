@@ -31,6 +31,7 @@ public final class VLandsUtilities extends JavaPlugin {
 
     private void setupManagers() {
         this.dataStorageManager = new SQLiteStorageManager(new File(this.getDataFolder(), "database.db"));
+        this.dataStorageManager.init();
 
         this.playerDataManager = new PlayerDataManager(this);
         Bukkit.getPluginManager().registerEvents(this.playerDataManager, this);

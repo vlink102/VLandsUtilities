@@ -1,6 +1,7 @@
 package net.vlands.data.player;
 
 import net.vlands.VLandsUtilities;
+import net.vlands.data.player.PlayerData.PlayerDataSnapShot;
 import net.vlands.util.Callback;
 import net.vlands.util.MinecraftName;
 import org.bukkit.Bukkit;
@@ -9,8 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import net.vlands.data.player.PlayerData.PlayerDataSnapShot;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +30,7 @@ public class PlayerDataManager implements Listener {
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent event) {
         //updates name and uuid database;
+        long past = System.currentTimeMillis();
         this.plugin.getDataStorageManager().saveNameAndUUID(event.getPlayer().getName(), event.getPlayer().getUniqueId());
         nameUUIDMap.put(new MinecraftName(event.getPlayer().getName()), event.getPlayer().getUniqueId());
 
@@ -39,7 +39,16 @@ public class PlayerDataManager implements Listener {
             return;
 
 
-        this.plugin.getDataStorageManager().getDataFromUUID(event.getPlayer().getUniqueId());
+        PlayerDataSnapShot snapShot = this.plugin.getDataStorageManager().getDataFromUUID(event.getPlayer().getUniqueId());
+
+        if (snapShot == null)
+            snapShot = new PlayerDataSnapShot(event.getPlayer().getName(),
+                    event.getPlayer().getUniqueId(), "defualt", 0.0, 0,
+                    new HashMap<>());
+        PlayerData playerData = new PlayerData(event.getPlayer().getName(), event.getPlayer().getUniqueId(), snapShot);
+        this.uuidPlayerDataMap.put(event.getPlayer().getUniqueId(), playerData);
+        long present = System.currentTimeMillis();
+        System.out.println("Loading data for " + event.getPlayer().getName() + " took " + (present-past) + "ms.");
     }
 
     @EventHandler
@@ -54,7 +63,7 @@ public class PlayerDataManager implements Listener {
     }
 
     public PlayerData getPlayerData(Player player) {
-        return null;
+        return this.uuidPlayerDataMap.get(player.getUniqueId());
     }
 
     /**

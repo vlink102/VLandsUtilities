@@ -108,7 +108,7 @@ public class SQLiteStorageManager extends DataStorageManager {
     @Override
     public Map<UUID, PlayerDataSnapShot> getDataFromUUIDMultiple(List<UUID> uuids) {
         String sql = "SELECT " + dataTableName + ".UUID," + playersTableName + ".NAME,killeffect,accuracy" +
-                ",skillponts,cooldowns FROM " + dataTableName + " LEFT JOIN " + playersTableName + " ON " +
+                ",skillpoints,cooldowns FROM " + dataTableName + " LEFT JOIN " + playersTableName + " ON " +
                 dataTableName + ".UUID=" + playersTableName + ".UUID WHERE " + getWhereConditionForUUID(uuids.size());
         try (PreparedStatement statement = this.connection.prepareStatement(sql)) {
             Map<UUID, PlayerDataSnapShot> dataMap = new HashMap<>();
@@ -128,6 +128,7 @@ public class SQLiteStorageManager extends DataStorageManager {
                 dataMap.put(uuid, new PlayerDataSnapShot(name, uuid, killeffect, accuracy, skillpoints, cooldownMap));
             }
 
+            System.out.println(dataMap);
             return dataMap;
 
         } catch (SQLException e) {
