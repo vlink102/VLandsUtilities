@@ -5,7 +5,10 @@ import net.vlands.data.CooldownManager;
 import net.vlands.data.manager.DataStorageManager;
 import net.vlands.data.manager.SQLiteStorageManager;
 import net.vlands.data.player.PlayerDataManager;
+import net.vlands.effect.EffectsManager;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -18,6 +21,8 @@ public final class VLandsUtilities extends JavaPlugin {
     private DataStorageManager dataStorageManager;
     @Getter
     private CooldownManager cooldownManager;
+    @Getter
+    private EffectsManager effectsManager;
 
     @Override
     public void onEnable() {
@@ -31,5 +36,7 @@ public final class VLandsUtilities extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(this.playerDataManager, this);
 
         this.cooldownManager = new CooldownManager(this);
+
+        this.effectsManager = new EffectsManager(this);
     }
 }

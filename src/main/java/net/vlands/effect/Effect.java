@@ -3,14 +3,13 @@ package net.vlands.effect;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
 public abstract class Effect {
 
-    private String name;
-    private String fancyName;
-    private String rawName;
+    private final String name;
+    private final String fancyName;
+    private final String rawName;
 
     public Effect(String name, String fancyName){
         this.name = name;
