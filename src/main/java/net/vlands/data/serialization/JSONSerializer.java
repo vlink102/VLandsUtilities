@@ -30,7 +30,5 @@ public class JSONSerializer {
         }
     }
 
-    private static class CooldownMap extends HashMap<String, Long>{
-
-    }
+    private static class CooldownMap extends HashMap<String, Long>{}
 }

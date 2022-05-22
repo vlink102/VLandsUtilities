@@ -76,7 +76,7 @@ public class SQLiteStorageManager extends DataStorageManager {
     }
 
     @Override
-    public void saveNameAndUUID(String name, String uuid) {
+    public void saveNameAndUUID(String name, UUID uuid) {
         String sql = "REPLACE INTO " + playersTableName + " (UUID,NAME) VALUES (?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, uuid.toString());
@@ -89,7 +89,7 @@ public class SQLiteStorageManager extends DataStorageManager {
 
     @Override
     public void savePlayerDataMultiple(Set<PlayerDataSnapShot> data) {
-        String sql = "UPDATE " + dataTableName + " SET killeffect=?,accuracy=?,skillpoints=?,cooldowns=? WHERE UUID=?";
+        String sql = "REPLACE INTO " + dataTableName + " (killeffect,accuracy,skillpoints,cooldowns,UUID) VALUES (?,?,?,?,?);";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             for (PlayerDataSnapShot datum : data) {
                 statement.setString(1, datum.getKillEffect());

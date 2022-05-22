@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class PlayerData {
@@ -14,20 +15,24 @@ public class PlayerData {
     private final String name;
     @Getter
     private final UUID uuid;
-    @Getter@Setter
+    @Getter
+    @Setter
     private String killEffect;
-    @Getter@Setter
+    @Getter
+    @Setter
     private double accuracy;
-    @Getter@Setter
+    @Getter
+    @Setter
     private int skillPoints;
 
     private final Map<String, Long> cooldownsLastUse;
 
-    protected PlayerData(String name, UUID uuid,PlayerDataSnapShot playerDataSnapShot) {
+    protected PlayerData(String name, UUID uuid, PlayerDataSnapShot playerDataSnapShot) {
         this.name = name;
         this.uuid = uuid;
         this.skillPoints = playerDataSnapShot.skillPoints;
-        this.accuracy = playerDataSnapShot.accuracy;;
+        this.accuracy = playerDataSnapShot.accuracy;
+        ;
         this.killEffect = playerDataSnapShot.killEffect;
         this.cooldownsLastUse = new HashMap<>(playerDataSnapShot.cooldownsLastUse);
     }
@@ -41,13 +46,20 @@ public class PlayerData {
     }
 
     public void setCooldownLastUse(String cooldown, long time) {
-
+        if (time <= 0)
+            this.cooldownsLastUse.remove(cooldown);
+        else
+            this.cooldownsLastUse.put(cooldown, time);
     }
 
     public long getCooldownLastUse(String cooldown) {
         if (this.cooldownsLastUse.containsKey(cooldown))
             return this.cooldownsLastUse.get(cooldown);
         return 0;
+    }
+
+    public Set<String> getCooldowns() {
+        return this.cooldownsLastUse.keySet();
     }
 
     public PlayerDataSnapShot snapshot() {

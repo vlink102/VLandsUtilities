@@ -8,7 +8,7 @@ public abstract class DataStorageManager {
 
     public abstract void init();
 
-    public abstract void saveNameAndUUID(String name, String uuid);
+    public abstract void saveNameAndUUID(String name, UUID uuid);
 
     public void savePlayerData(PlayerDataSnapShot data) {
         this.savePlayerDataMultiple(Collections.singleton(data));
