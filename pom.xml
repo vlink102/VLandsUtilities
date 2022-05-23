@@ -126,14 +126,14 @@
         <dependency>
             <groupId>com.github.Revxrsal.Lamp</groupId>
             <artifactId>common</artifactId>
-            <version>[version]</version>
+            <version>3.0.4</version>
         </dependency>
 
         <!-- For the bukkit module -->
         <dependency>
             <groupId>com.github.Revxrsal.Lamp</groupId>
             <artifactId>bukkit</artifactId>
-            <version>[version]</version>
+            <version>3.0.4</version>
         </dependency>
     </dependencies>
 </project>

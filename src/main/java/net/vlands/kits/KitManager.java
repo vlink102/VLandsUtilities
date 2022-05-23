@@ -40,6 +40,10 @@ public class KitManager {
         }
     }
 
+    public void reloadKits() {
+
+    }
+
     private void loadKit(File file, String name) throws IOException, InvalidConfigurationException {
         FileConfiguration kitConfig = new YamlConfiguration();
         kitConfig.load(file);
@@ -82,6 +86,16 @@ public class KitManager {
 
     public Kit getKit(String internalName) {
         return kits.get(internalName);
+    }
+
+    public void addOrReplaceKit(Kit kit) {
+        this.kits.put(kit.getInternalName(), kit);
+        try {
+            this.saveKit(kit);
+        } catch (IOException | InvalidConfigurationException e) {
+            this.plugin.getLogger().severe("Could not save the kit: " + kit.getInternalName());
+            e.printStackTrace();
+        }
     }
 
 }
