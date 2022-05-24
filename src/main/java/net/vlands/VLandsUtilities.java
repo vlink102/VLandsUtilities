@@ -2,7 +2,7 @@ package net.vlands;
 
 import de.slikey.effectlib.EffectManager;
 import lombok.Getter;
-import net.vlands.commands.CreateKitCommand;
+import net.vlands.commands.KitCommands;
 import net.vlands.data.CooldownManager;
 import net.vlands.data.manager.DataStorageManager;
 import net.vlands.data.manager.SQLiteStorageManager;
@@ -53,11 +53,12 @@ public final class VLandsUtilities extends JavaPlugin {
     private void setupCommands() {
         CommandHandler commandHandler = new BukkitHandler(this)
                 .registerValueResolver(ArgumentStack.class, ValueResolver.ValueResolverContext::arguments);
+        commandHandler.registerDependency(VLandsUtilities.class, this);
         commandHandler.getAutoCompleter().registerSuggestion("players", (args, sender, command) -> {
             String last = args.get(args.size() - 1).toLowerCase(Locale.ROOT);
             return Bukkit.getOnlinePlayers().stream().map((Function<Player, String>) HumanEntity::getName).filter(s -> s.toLowerCase(Locale.ROOT).startsWith(last)).collect(Collectors.toList());
         });
-        commandHandler.register(new CreateKitCommand(this));
+        commandHandler.register(new KitCommands());
 
 
         //last thing to do

@@ -4,12 +4,15 @@ import net.vlands.VLandsUtilities;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class KitManager {
 
@@ -29,7 +32,7 @@ public class KitManager {
         for (File file : this.kitFolder.listFiles()) {
             if (!file.getName().endsWith(".yml"))
                 continue; //not a kit file
-            String name = file.getName().substring(0, file.getName().length() - 5);
+            String name = file.getName().substring(0, file.getName().length() - 5).toLowerCase();
             try {
                 loadKit(file, name);
                 this.plugin.getLogger().info("Loaded kit: " + name);
@@ -58,7 +61,8 @@ public class KitManager {
             invContents[i] = kitConfig.getItemStack(Integer.toString(i));
         }
         double cost = kitConfig.getDouble("cost");
-        Kit kit = new Kit(name, formattedName, new ItemStack[]{helmet, chestplate, pants, boots}, invContents, cost);
+        long cooldown = kitConfig.getLong("cooldown");
+        Kit kit = new Kit(name, formattedName, new ItemStack[]{helmet, chestplate, pants, boots}, invContents, cost, cooldown);
 
         this.kits.put(name, kit);
     }
@@ -73,6 +77,7 @@ public class KitManager {
 
         config.set("formatted-name", kit.getFormattedName());
         config.set("cost", kit.getCost());
+        config.set("cooldown", kit.getCooldown());
         config.set("helmet", kit.getHelmet());
         config.set("chestplate", kit.getChestplate());
         config.set("pants", kit.getPants());
@@ -84,8 +89,12 @@ public class KitManager {
         config.save(file);
     }
 
+    public Set<Kit> getKits() {
+        return new HashSet<>(this.kits.values());
+    }
+
     public Kit getKit(String internalName) {
-        return kits.get(internalName);
+        return kits.get(internalName.toLowerCase());
     }
 
     public void addOrReplaceKit(Kit kit) {
@@ -96,6 +105,35 @@ public class KitManager {
             this.plugin.getLogger().severe("Could not save the kit: " + kit.getInternalName());
             e.printStackTrace();
         }
+    }
+
+    public void deleteKit(Kit kit) {
+        this.kits.remove(kit.getInternalName());
+        File file = new File(this.kitFolder, kit.getInternalName());
+        if (file.exists())
+            file.delete();
+    }
+
+    public boolean isOnCooldown(Player player, Kit kit) {
+        return this.plugin.getCooldownManager().isOnCooldown(player, kit.getInternalName(), kit.getCooldown());
+    }
+
+    public void applyKitWithCooldown(Player player, Kit kit) {
+        this.plugin.getCooldownManager().setLastUseToNow(player, kit.getInternalName());
+        this.applyKitWithoutCooldown(player, kit);
+    }
+
+    public void applyKitWithoutCooldown(Player player, Kit kit) {
+        this.setKit(kit, player);
+        //TODO apply the kit
+    }
+
+    public Kit getKit(Player player) {
+        return this.kits.get(this.plugin.getPlayerDataManager().getPlayerData(player).getKit());
+    }
+
+    public void setKit(Kit kit, Player player){
+        this.plugin.getPlayerDataManager().getPlayerData(player).setKit(kit.getInternalName());
     }
 
 }

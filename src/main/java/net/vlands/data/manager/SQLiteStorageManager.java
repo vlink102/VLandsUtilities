@@ -11,21 +11,20 @@ import java.util.logging.Logger;
 
 public class SQLiteStorageManager extends DataStorageManager {
 
-    private static final Map<String, String> COLUMNS = new HashMap<>();
-
-    static {
-        COLUMNS.put("killeffect", "TINYTEXT");
-        COLUMNS.put("accuracy", "REAL");
-        COLUMNS.put("skillpoints", "INT");
-        COLUMNS.put("cooldowns", "LONGTEXT");
-        COLUMNS.put("ignorecooldown", "BOOL");
-    }
+    private final Map<String, String> COLUMNS = new HashMap<>();
 
     private Connection connection;
     private final String dataTableName = "vlands_utilities";
     private final String playersTableName = "vlands_players";
 
     public SQLiteStorageManager(File dbFile) {
+        COLUMNS.put("killeffect", "TINYTEXT");
+        COLUMNS.put("accuracy", "REAL");
+        COLUMNS.put("skillpoints", "INT");
+        COLUMNS.put("cooldowns", "LONGTEXT");
+        COLUMNS.put("ignorecooldown", "BOOL");
+        COLUMNS.put("kit","TINYTEXT");
+
         if (!dbFile.getParentFile().isDirectory()) {
             if (!dbFile.getParentFile().mkdirs()) {
                 throw new UnsupportedOperationException("Could not create the following directory: " + dbFile.getParentFile().getAbsolutePath());
@@ -81,9 +80,10 @@ public class SQLiteStorageManager extends DataStorageManager {
         }
     }
 
+    //FIXME if you need to add new data types
     @Override
     public void savePlayerDataMultiple(Set<PlayerDataSnapShot> data) {
-        String sql = "REPLACE INTO " + dataTableName + " (killeffect,accuracy,skillpoints,cooldowns,ignorecooldown,UUID) VALUES (?,?,?,?,?);";
+        String sql = "REPLACE INTO " + dataTableName + " (killeffect,accuracy,skillpoints,cooldowns,ignorecooldown,kit,UUID) VALUES (?,?,?,?,?);";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             for (PlayerDataSnapShot datum : data) {
                 statement.setString(1, datum.getKillEffect());
@@ -91,7 +91,8 @@ public class SQLiteStorageManager extends DataStorageManager {
                 statement.setInt(3, datum.getSkillPoints());
                 statement.setString(4, JSONSerializer.serializeCooldownMap(datum.getCooldownsLastUse()));
                 statement.setBoolean(5, datum.isIgnoringCooldowns());
-                statement.setString(6, datum.getUuid().toString());
+                statement.setString(6, datum.getKit());
+                statement.setString(7, datum.getUuid().toString());
                 statement.addBatch();
             }
             statement.executeBatch();
@@ -102,9 +103,7 @@ public class SQLiteStorageManager extends DataStorageManager {
 
     @Override
     public Map<UUID, PlayerDataSnapShot> getDataFromUUIDMultiple(List<UUID> uuids) {
-        String sql = "SELECT " + dataTableName + ".UUID," + playersTableName + ".NAME,killeffect,accuracy" +
-                ",skillpoints,cooldowns,ignorecooldown FROM " + dataTableName + " LEFT JOIN " + playersTableName + " ON " +
-                dataTableName + ".UUID=" + playersTableName + ".UUID WHERE " + getWhereConditionForUUID(uuids.size());
+        String sql = getFirstPartOfSelectStmt() + getWhereConditionForUUID(uuids.size());
         try (PreparedStatement statement = this.connection.prepareStatement(sql)) {
             Map<UUID, PlayerDataSnapShot> dataMap = new HashMap<>();
 
@@ -138,9 +137,7 @@ public class SQLiteStorageManager extends DataStorageManager {
 
     @Override
     public Map<String, PlayerDataSnapShot> getDataFromNameMultiple(List<String> names) {
-        String sql = "SELECT " + dataTableName + ".UUID," + playersTableName + ".NAME,killeffect,accuracy" +
-                ",skillponts,cooldowns,ignorecooldown FROM " + dataTableName + " LEFT JOIN " + playersTableName + " ON " +
-                dataTableName + ".UUID=" + playersTableName + ".UUID WHERE " + getWhereConditionForNames(names.size());
+        String sql = getFirstPartOfSelectStmt() + getWhereConditionForNames(names.size());
         try (PreparedStatement statement = this.connection.prepareStatement(sql)) {
             Map<String, PlayerDataSnapShot> dataMap = new HashMap<>();
 
@@ -176,7 +173,14 @@ public class SQLiteStorageManager extends DataStorageManager {
         return stringBuilder.toString();
     }
 
-    Set<PlayerDataSnapShot> convertResultSetToSnaphots(ResultSet resultSet) throws SQLException {
+    //FIXME if you need to add new data types
+    private String getFirstPartOfSelectStmt() {
+        return "SELECT " + dataTableName + ".UUID," + playersTableName + ".NAME,killeffect,accuracy" +
+                ",skillpoints,cooldowns,ignorecooldown,kit FROM " + dataTableName + " LEFT JOIN " + playersTableName + " ON " +
+                dataTableName + ".UUID=" + playersTableName + ".UUID WHERE ";
+    }
+
+    private Set<PlayerDataSnapShot> convertResultSetToSnaphots(ResultSet resultSet) throws SQLException {
         Set<PlayerDataSnapShot> toReturn = new HashSet<>();
         while (resultSet.next()) {
             UUID uuid = UUID.fromString(resultSet.getString("UUID"));
@@ -186,7 +190,8 @@ public class SQLiteStorageManager extends DataStorageManager {
             double accuracy = resultSet.getDouble("accuracy");
             boolean ignoreCooldowns = resultSet.getBoolean("ignorecooldown");
             Map<String, Long> cooldownMap = JSONSerializer.deserializeCooldownMap(resultSet.getString("cooldowns"));
-            toReturn.add(new PlayerDataSnapShot(name, uuid, killeffect, accuracy, skillpoints,ignoreCooldowns, cooldownMap));
+            String kit = resultSet.getString("kit");
+            toReturn.add(new PlayerDataSnapShot(name, uuid, killeffect, accuracy, skillpoints,ignoreCooldowns, cooldownMap, kit));
         }
         return toReturn;
     }

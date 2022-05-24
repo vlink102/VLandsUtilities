@@ -3,7 +3,6 @@ package net.vlands.data.player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.vlands.effect.Effect;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +27,9 @@ public class PlayerData {
     @Getter
     @Setter
     private boolean ignoringCooldowns;
+    @Getter
+    @Setter
+    private String kit;
 
     private final Map<String, Long> cooldownsLastUse;
 
@@ -106,6 +108,7 @@ public class PlayerData {
         private int skillPoints;
         private boolean ignoringCooldowns;
         private Map<String, Long> cooldownsLastUse;
+        private String kit;
 
         private PlayerDataSnapShot(PlayerData playerData) {
             this.name = playerData.name;
