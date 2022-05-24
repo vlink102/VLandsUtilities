@@ -43,7 +43,7 @@ public class PlayerDataManager implements Listener {
         if (snapShot == null)
             snapShot = new PlayerDataSnapShot(event.getPlayer().getName(),
                     event.getPlayer().getUniqueId(), "defualt", 0.0, 0,
-                    false,new HashMap<>());
+                    false,new HashMap<>(), null);
         PlayerData playerData = new PlayerData(event.getPlayer().getName(), event.getPlayer().getUniqueId(), snapShot);
         this.uuidPlayerDataMap.put(event.getPlayer().getUniqueId(), playerData);
         long present = System.currentTimeMillis();
