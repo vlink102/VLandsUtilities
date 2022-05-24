@@ -5,6 +5,7 @@ import net.vlands.data.player.PlayerData;
 import net.vlands.effect.effects.Angry;
 import net.vlands.util.ClassEnumerator;
 import org.bukkit.entity.Player;
+import org.reflections.Reflections;
 
 import java.util.*;
 
@@ -24,16 +25,7 @@ public class EffectsManager {
     }
 
     public void registerAllEffects() {
-        List<Class<?>> discoveredClasses = ClassEnumerator.getPackageClasses(Angry.class.getPackage());
-        discoveredClasses.forEach(clazz -> {
-            if (Effect.class.isAssignableFrom(clazz)) {
-                try {
-                    plugin.getEffectsManager().addEffect(((Effect) clazz.newInstance()));
-                } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        Reflections reflections = new Reflections("com.my.project");
     }
 
     public Set<Effect> getEffects() {

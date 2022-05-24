@@ -1,6 +1,9 @@
 package net.vlands.kits;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
 import net.vlands.VLandsUtilities;
+import net.vlands.util.GenericUtils;
+import net.vlands.util.YamlUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,10 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class KitManager {
 
@@ -23,15 +23,13 @@ public class KitManager {
     public KitManager(VLandsUtilities plugin) {
         this.plugin = plugin;
         this.kitFolder = new File(this.plugin.getDataFolder(), "kits");
-        if (!this.kitFolder.isDirectory())
-            this.kitFolder.mkdirs();
+        if (!this.kitFolder.isDirectory()) this.kitFolder.mkdirs();
+        if (this.kitFolder.listFiles() == null) return;
 
-        if (this.kitFolder.listFiles() == null)
-            return;
+        for (File file : Objects.requireNonNull(this.kitFolder.listFiles())) {
+            YamlUtils.createConfig(plugin.getDataFolder() + ":kits", file.getName(), plugin.getResource("kit.yml"))
 
-        for (File file : this.kitFolder.listFiles()) {
-            if (!file.getName().endsWith(".yml"))
-                continue; //not a kit file
+            if (!file.getName().endsWith(".yml")) continue;
             String name = file.getName().substring(0, file.getName().length() - 5).toLowerCase();
             try {
                 loadKit(file, name);

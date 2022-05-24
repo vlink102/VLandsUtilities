@@ -92,7 +92,12 @@
         <dependency>
             <groupId>dev.dejvokep</groupId>
             <artifactId>boosted-yaml</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.dejvokep</groupId>
+            <artifactId>boosted-yaml-spigot</artifactId>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -128,12 +133,15 @@
             <artifactId>common</artifactId>
             <version>3.0.4</version>
         </dependency>
-
-        <!-- For the bukkit module -->
         <dependency>
             <groupId>com.github.Revxrsal.Lamp</groupId>
             <artifactId>bukkit</artifactId>
             <version>3.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.1</version>
         </dependency>
     </dependencies>
 </project>

@@ -19,12 +19,12 @@ public class KitCommands {
     @CommandPermission("vlands.commands.createkit")
     public void createKit(Player player,@Named("internal name") String internalName, @Named("cost") Double cost, @Named("formatted name") ArgumentStack stack) {
         String formattedName = ChatColor.translateAlternateColorCodes('&', stack.join(" "));
-        if (formattedName.equals("") || internalName.equals(""))
-            //cant creat ekit
-            return;
+        if (formattedName.equals("") || internalName.equals("")) return;
 
-        Kit kit = new Kit(internalName, formattedName, player.getEquipment().getArmorContents(), player.getInventory().getContents(), cost, 60000);
+        Kit kit = new Kit(internalName, formattedName, player.getEquipment().getArmorContents(), player.getInventory().getContents(), cost, 60000); // TODO idk how potioneffects work here, maybe only alllow from yaml.
         this.plugin.getKitManager().addOrReplaceKit(kit);
     }
+
+
 
 }

@@ -1,0 +1,21 @@
+file-version: 1
+
+kit-name: ""
+
+cost:
+  enabled: true
+  amount: 0
+
+cooldown:
+  enabled: true
+  duration: 0
+
+potion-effects: []
+
+items:
+  armor-items:
+    helmet: []
+    chestplate: []
+    leggings: []
+    boots: []
+  inventory-items: []
