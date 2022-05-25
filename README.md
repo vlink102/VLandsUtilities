@@ -46,7 +46,7 @@ To-do:
       - Throwable Lava/Water (No extra info needed) (c?:BlockRestrictor non-player-placed blocks)
       - Panic Item (Brick Box, heals player(c-Boolean), dissapears after (c-Double) time.)
       - Increase Enchantment Level Item (Random enchantment(c-Enchantment) per item, Random enchantment increase amount(c-Integer:level upgrade))
-      - Russian Roulette (Certain chance of being killed, random per item, (c-String:Split to parseint) chance range)
+      - Russian Roulette (Certain chance of being killed, random per item, (c-String:Split to parseint) chance range, has no other purpose just for fun)
       - Deathly Dice (Roll the dice on the floor, Gives a random(c-Item) OP item, (c-Double) time to kill a player or die) (p?:Custom roll animation)
         > Commands:
           - AddDiceItem <name> (Item in hand, param1 is internal name for commands)
@@ -59,8 +59,11 @@ To-do:
       - Launch (Launches player forward in direction they're facing.)
       - Laser (Guardian beam from player's eyes, damaging players for (c-Double) time.) (p?)
       - ShockWave (Effects (c-Integer) players/entities nearby(c-Double) with enchantments(c-Enchantment:blindness,slowness,nausea) (p?:Custom shockwave effect, explosion at player, then using circle of white particles expanding outwards as the shockwave.)
-      - Mine (Invisible(p?:Armor-stands or silverfish/endermite with invisibility) bomb, deals (c-Double) damage and launches nearby(c-Double) players/entities away from the explosion.)
+      - Mine (Invisible(p?:Armor-stands or silverfish/endermite with invisibility) bomb, deals (c-Double) damage and launches nearby(c-Double) players/entities away from the explosion. Maximum of (c-Integer) mines placed allowed.) (p?:make only visible to the placer, and can be disarmed by the placer by right-clicking the mine.)
       - Heat-seeking missile (Self explanatory, sends a firework/fireball/particle line trail(p?) towards a player, will hit target indefinitely. Deals 0 damage to non-targetted players.) (p?:Lock target system, maybe use ray-cast from player eye direction (only activate when looking at player), send message 'Target Locked: PlayerName')
+      - LifeSteal (Gives (c-Integer) hearts to the player and takes (c-Integer) from the opponent.)
+      - Curse Ability (Makes the opponent only able to damage themselves for (c-Double) time. Only works with melee and ranged, will deal (c-Integer) hearts every time they hit, no matter the item.)
+      - GraveYard ability (Spawns skeletons in a radius(c-Double), for (c-Double) time. Skeletons have no bow but still deal damage) (p?:idk if skeletons do damage if they dont have a bow, never tested)
   > Trivial Commands:
     - GetUUID
     - SetSkull
