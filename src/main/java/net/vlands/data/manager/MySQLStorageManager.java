@@ -90,7 +90,7 @@ public class MySQLStorageManager extends DataStorageManager {
     //FIXME if you need to add new data types
     @Override
     public void savePlayerDataMultiple(Set<PlayerDataSnapShot> data) {
-        String sql = "REPLACE INTO " + dataTableName + " (killeffect,accuracy,skillpoints,cooldowns,ignorecooldown,kit,UUID) VALUES (?,?,?,?,?);";
+        String sql = "REPLACE INTO " + dataTableName + " (killeffect,accuracy,skillpoints,cooldowns,ignorecooldown,kit,UUID) VALUES (?,?,?,?,?,?);";
         try (Connection connection = source.getConnection();PreparedStatement statement = connection.prepareStatement(sql)) {
             for (PlayerDataSnapShot datum : data) {
                 statement.setString(1, datum.getKillEffect());
