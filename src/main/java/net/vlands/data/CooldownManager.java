@@ -27,7 +27,7 @@ public class CooldownManager {
         return this.pdm.getPlayerData(player).getCooldownLastUse(cooldown);
     }
 
-    public void setLastUse(Player player, String cooldown, long time) {
+    public void forceSetLastUse(Player player, String cooldown, long time) {
         pdm.getPlayerData(player).setCooldownLastUse(cooldown, time);
     }
 
@@ -36,7 +36,19 @@ public class CooldownManager {
     }
 
     public void resetCooldown(Player player, String cooldown) {
-        setLastUse(player, cooldown, 0L);
+        forceSetLastUse(player, cooldown, 0L);
+    }
+
+    public boolean isIgnoringCooldowns(Player player) {
+        return pdm.getPlayerData(player).isIgnoringCooldowns();
+    }
+
+    public void toggleIgnoringCooldowns(Player player) {
+        pdm.getPlayerData(player).toggleIgnoreCooldown();
+    }
+
+    public void setIgnoringCooldowns(Player player, boolean bool) {
+        pdm.getPlayerData(player).setIgnoringCooldowns(bool);
     }
 
 }

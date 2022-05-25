@@ -3,12 +3,15 @@ package net.vlands.kits;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import net.vlands.VLandsUtilities;
 import net.vlands.util.GenericUtils;
+import net.vlands.util.Verify;
 import net.vlands.util.YamlUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,10 +30,11 @@ public class KitManager {
         if (this.kitFolder.listFiles() == null) return;
 
         for (File file : Objects.requireNonNull(this.kitFolder.listFiles())) {
-            YamlUtils.createConfig(plugin.getDataFolder() + ":kits", file.getName(), plugin.getResource("kit.yml"))
+            //why is this here?
+            //YamlUtils.createConfig(plugin.getDataFolder() + ":kits", file.getName(), plugin.getResource("kit.yml"))
 
             if (!file.getName().endsWith(".yml")) continue;
-            String name = file.getName().substring(0, file.getName().length() - 5).toLowerCase();
+            String name = file.getName().substring(0, file.getName().length() - 4).toLowerCase();
             try {
                 loadKit(file, name);
                 this.plugin.getLogger().info("Loaded kit: " + name);
@@ -60,9 +64,14 @@ public class KitManager {
         }
         double cost = kitConfig.getDouble("cost");
         long cooldown = kitConfig.getLong("cooldown");
-        Kit kit = new Kit(name, formattedName, new ItemStack[]{helmet, chestplate, pants, boots}, invContents, cost, cooldown);
+        List<PotionEffect> potionEffects = (List<PotionEffect>) kitConfig.getList("potions");
+        Kit kit = new Kit(name, formattedName, new ItemStack[]{helmet, chestplate, pants, boots}, invContents, potionEffects, cost, cooldown);
 
         this.kits.put(name, kit);
+    }
+
+    private String potionToString(PotionEffect effect) {
+        return effect.getType().toString() + ":" + effect.getAmplifier() + ":" + effect.getDuration();
     }
 
     private void saveKit(Kit kit) throws IOException, InvalidConfigurationException {
@@ -76,6 +85,7 @@ public class KitManager {
         config.set("formatted-name", kit.getFormattedName());
         config.set("cost", kit.getCost());
         config.set("cooldown", kit.getCooldown());
+        config.set("potions", kit.getPotionEffects());
         config.set("helmet", kit.getHelmet());
         config.set("chestplate", kit.getChestplate());
         config.set("pants", kit.getPants());
@@ -91,7 +101,7 @@ public class KitManager {
         return new HashSet<>(this.kits.values());
     }
 
-    public Kit getKit(String internalName) {
+    public Kit getKitByName(String internalName) {
         return kits.get(internalName.toLowerCase());
     }
 
@@ -121,16 +131,20 @@ public class KitManager {
         this.applyKitWithoutCooldown(player, kit);
     }
 
+    public void removeKit(Player player) {
+        //TODO
+    }
+
     public void applyKitWithoutCooldown(Player player, Kit kit) {
-        this.setKit(kit, player);
+        this.setLastKit(kit, player);
         //TODO apply the kit
     }
 
-    public Kit getKit(Player player) {
+    public Kit getLastKit(Player player) {
         return this.kits.get(this.plugin.getPlayerDataManager().getPlayerData(player).getKit());
     }
 
-    public void setKit(Kit kit, Player player){
+    private void setLastKit(Kit kit, Player player) {
         this.plugin.getPlayerDataManager().getPlayerData(player).setKit(kit.getInternalName());
     }
 
