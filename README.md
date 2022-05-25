@@ -1,9 +1,9 @@
+```
 Functionality and Utility plugin for VLands Network (Kit-PvP)
 Authors: V_Link
 Contributors: minion325 (Major thanks)
 Library credits: BoostedYAML (dejvokep), RedLib (Redempt), EffectLib (~NathanWolf).
 
-```
 Key:
   (c-<?>): Configurable value, when used after a word, refers to the word. When used alone, refers to the next or previous word in context
        E.g. (c) minutes, where (c) is the time in minutes.   ~ (value from config) minutes.            ~ 3 minutes
