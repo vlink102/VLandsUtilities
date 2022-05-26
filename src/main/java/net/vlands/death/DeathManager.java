@@ -23,9 +23,4 @@ public class DeathManager implements Listener {
     public void onMobDeath(EntityDeathEvent event) {
 
     }
-
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-
-    }
 }
