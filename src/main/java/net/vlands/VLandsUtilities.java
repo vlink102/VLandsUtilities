@@ -2,16 +2,20 @@ package net.vlands;
 
 import de.slikey.effectlib.EffectManager;
 import lombok.Getter;
+import net.milkbowl.vault.economy.Economy;
 import net.vlands.commands.KitCommands;
 import net.vlands.data.CooldownManager;
 import net.vlands.data.manager.DataStorageManager;
 import net.vlands.data.manager.SQLiteStorageManager;
 import net.vlands.data.player.PlayerDataManager;
+import net.vlands.death.managers.SkillManager;
+import net.vlands.death.managers.VaultManager;
 import net.vlands.effect.EffectsManager;
 import net.vlands.kits.KitManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.CommandHandler;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
@@ -33,6 +37,11 @@ public final class VLandsUtilities extends JavaPlugin {
     @Getter private EffectManager complexEffectsManager;
     @Getter private KitManager kitManager;
 
+    @Getter private SkillManager skillManager;
+
+    @Getter private VaultManager vaultManager;
+    @Getter private Economy economy;
+
     @Override
     public void onEnable() {
         setupManagers();
@@ -47,7 +56,19 @@ public final class VLandsUtilities extends JavaPlugin {
         cooldownManager = new CooldownManager(this);
         effectsManager = new EffectsManager(this);
         complexEffectsManager = new EffectManager(this);
-        this.kitManager = new KitManager(this);
+        kitManager = new KitManager(this);
+
+        skillManager = new SkillManager(this);
+
+        if (setupEconomy()) vaultManager = new VaultManager(this, getEconomy());
+    }
+
+    private boolean setupEconomy() {
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) return false;
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) return false;
+        economy = rsp.getProvider();
+        return economy != null;
     }
 
     private void setupCommands() {
