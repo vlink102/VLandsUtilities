@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
@@ -28,26 +29,31 @@ public class PlayerDataManager implements Listener {
 
     //this is temp and just for testing, i have to load data async
     @EventHandler
-    private void onPlayerJoin(PlayerJoinEvent event) {
+    private void onPlayerJoin(PlayerLoginEvent event) {
         //updates name and uuid database;
-        long past = System.currentTimeMillis();
-        this.plugin.getDataStorageManager().saveNameAndUUID(event.getPlayer().getName(), event.getPlayer().getUniqueId());
-        nameUUIDMap.put(new MinecraftName(event.getPlayer().getName()), event.getPlayer().getUniqueId());
+        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+            long past = System.currentTimeMillis();
+            this.plugin.getDataStorageManager().saveNameAndUUID(event.getPlayer().getName(), event.getPlayer().getUniqueId());
+            nameUUIDMap.put(new MinecraftName(event.getPlayer().getName()), event.getPlayer().getUniqueId());
 
-        //data already loaded
-        if (uuidPlayerDataMap.containsKey(event.getPlayer().getUniqueId())) return;
+            //data already loaded
+            if (uuidPlayerDataMap.containsKey(event.getPlayer().getUniqueId())) return;
 
 
-        PlayerDataSnapShot snapShot = this.plugin.getDataStorageManager().getDataFromUUID(event.getPlayer().getUniqueId());
+            PlayerDataSnapShot snapShot = this.plugin.getDataStorageManager().getDataFromUUID(event.getPlayer().getUniqueId());
 
-        if (snapShot == null)
-            snapShot = new PlayerDataSnapShot(event.getPlayer().getName(),
-                    event.getPlayer().getUniqueId(), "defualt", 0.0, 0,
-                    false,new HashMap<>(), null);
-        PlayerData playerData = new PlayerData(event.getPlayer().getName(), event.getPlayer().getUniqueId(), snapShot);
-        this.uuidPlayerDataMap.put(event.getPlayer().getUniqueId(), playerData);
-        long present = System.currentTimeMillis();
-        System.out.println("Loading data for " + event.getPlayer().getName() + " took " + (present-past) + "ms.");
+            if (snapShot == null)
+                snapShot = new PlayerDataSnapShot(event.getPlayer().getName(),
+                        event.getPlayer().getUniqueId(), "defualt", 0.0, 0,
+                        false,new HashMap<>(), null);
+            PlayerData playerData = new PlayerData(event.getPlayer().getName(), event.getPlayer().getUniqueId(), snapShot);
+            long present = System.currentTimeMillis();
+            System.out.println("Loading data for " + event.getPlayer().getName() + " took " + (present-past) + "ms.");
+
+            Bukkit.getScheduler().runTask(plugin, () -> this.uuidPlayerDataMap.put(event.getPlayer().getUniqueId(), playerData));
+        });
+
+
     }
 
     @EventHandler
