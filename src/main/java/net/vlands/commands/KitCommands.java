@@ -28,9 +28,9 @@ public class KitCommands {
         if (formattedName.equals("") || internalName.equals("")) return;
 
         List<PotionEffect> effectList = new ArrayList<>(player.getActivePotionEffects());
-        effectList.forEach(potionEffect -> potionEffect = new PotionEffect(potionEffect.getType(), 1200 /* 1 minute */, potionEffect.getAmplifier()));
+        effectList.forEach(potionEffect -> potionEffect = new PotionEffect(potionEffect.getType(), 1200 /* C-Double(sec) */, potionEffect.getAmplifier()));
 
-        Kit kit = new Kit(internalName, formattedName, player.getEquipment().getArmorContents(), player.getInventory().getContents(), effectList, cost, 60000); // TODO idk how potioneffects work here, maybe only alllow from yaml.
+        Kit kit = new Kit(internalName, formattedName, player.getEquipment().getArmorContents(), player.getInventory().getContents(), effectList, cost, 60000);
         this.plugin.getKitManager().addOrReplaceKit(kit);
     }
 

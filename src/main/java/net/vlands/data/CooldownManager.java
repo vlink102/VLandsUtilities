@@ -19,6 +19,7 @@ public class CooldownManager {
         return getTimePassed(player, cooldown) < duration;
     }
 
+    @Deprecated("?")
     public long getRemainingTime(Player player, String cooldown, long duration) {
         return duration - getTimePassed(player, cooldown);
     }
