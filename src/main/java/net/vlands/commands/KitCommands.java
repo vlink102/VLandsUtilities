@@ -4,11 +4,15 @@ import net.vlands.VLandsUtilities;
 import net.vlands.kits.Kit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Dependency;
 import revxrsal.commands.annotation.Named;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 import revxrsal.commands.command.ArgumentStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class KitCommands {
 
@@ -21,7 +25,10 @@ public class KitCommands {
         String formattedName = ChatColor.translateAlternateColorCodes('&', stack.join(" "));
         if (formattedName.equals("") || internalName.equals("")) return;
 
-        Kit kit = new Kit(internalName, formattedName, player.getEquipment().getArmorContents(), player.getInventory().getContents(), cost, 60000); // TODO idk how potioneffects work here, maybe only alllow from yaml.
+        List<PotionEffect> effectList = new ArrayList<>(player.getActivePotionEffects());
+        effectList.forEach(potionEffect -> potionEffect = new PotionEffect(potionEffect.getType(), 1200 /* 1 minute */, potionEffect.getAmplifier()));
+
+        Kit kit = new Kit(internalName, formattedName, player.getEquipment().getArmorContents(), player.getInventory().getContents(), effectList, cost, 60000); // TODO idk how potioneffects work here, maybe only alllow from yaml.
         this.plugin.getKitManager().addOrReplaceKit(kit);
     }
 
