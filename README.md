@@ -1,5 +1,5 @@
 ```
-Functionality and Utility plugin for VLands Network (Kit-PvP)
+Functionality and Utility plugin for VLands Network
 Authors: V_Link
 Contributors: minion325 (Major thanks)
 Library credits: BoostedYAML (dejvokep), RedLib (Redempt), EffectLib (~NathanWolf).
@@ -63,7 +63,7 @@ To-do:
       - Heat-seeking missile (Self explanatory, sends a firework/fireball/particle line trail(p?) towards a player, will hit target indefinitely. Deals 0 damage to non-targetted players.) (p?:Lock target system, maybe use ray-cast from player eye direction (only activate when looking at player), send message 'Target Locked: PlayerName')
       - LifeSteal (Gives (c-Integer) hearts to the player and takes (c-Integer) from the opponent.)
       - Curse Ability (Makes the opponent only able to damage themselves for (c-Double) time. Only works with melee and ranged, will deal (c-Integer) hearts every time they hit, no matter the item.)
-      - GraveYard ability (Spawns skeletons in a radius(c-Double), for (c-Double) time. Skeletons have no bow but still deal damage) (p?:idk if skeletons do damage if they dont have a bow, never tested)
+      - GraveYard ability (Spawns zombies in a radius(c-Double), for (c-Double) time.)
       - Voodoo Doll (Any natural damage you take within (c-Double) time, (c-Integer)% will be applied to the opponent. (Right-click player to use))
       - Anti Knockback (Any knockback being dealt will be cancelled for (c-Double) time.) (p?:is this possible without triggering anticheats)
   > Trivial Commands:
