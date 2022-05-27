@@ -1,5 +1,5 @@
 ```
-Functionality and Utility plugin for VLands Network (Kit-PvP)
+Functionality and Utility plugin for VLands Network
 Authors: V_Link
 Contributors: minion325 (Major thanks)
 Library credits: BoostedYAML (dejvokep), RedLib (Redempt), EffectLib (~NathanWolf).
