@@ -1,5 +1,7 @@
 package net.vlands.util;
 
+import net.vlands.util.math.MathUtils;
+
 import java.util.List;
 
 public class TimeConverter {

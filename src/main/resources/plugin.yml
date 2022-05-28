@@ -3,7 +3,7 @@ version: '${project.version}'
 main: net.vlands.VLandsUtilities
 api-version: 1.18
 prefix: VLands Utilities
-softdepend: [ AquaCore, PlaceholderAPI, StatsSB, EssentialsX ]
+softdepend: [ AquaCore, PlaceholderAPI, StatsSB, EssentialsX, Vault, EffectLib ]
 authors: [ V_Link, minion325 ]
 description: VLands Network - Utility Plugin
 website: https://vlands.net/

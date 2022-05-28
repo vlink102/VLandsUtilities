@@ -1,5 +1,6 @@
 package net.vlands;
 
+import com.earth2me.essentials.IEssentials;
 import de.slikey.effectlib.EffectManager;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
@@ -12,6 +13,7 @@ import net.vlands.death.managers.SkillManager;
 import net.vlands.death.managers.VaultManager;
 import net.vlands.effect.EffectsManager;
 import net.vlands.kits.KitManager;
+import net.vlands.util.GenericUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -42,6 +44,15 @@ public final class VLandsUtilities extends JavaPlugin {
     @Getter private VaultManager vaultManager;
     @Getter private Economy economy;
 
+    public boolean hasVault = false;
+    public boolean hasStatsSB = false;
+    public boolean hasPlaceholderAPI = false;
+    public boolean hasEffectLib = false;
+    public boolean hasAquaCore = false;
+    public boolean hasEssentialsX = false;
+
+    @Getter private IEssentials essentials;
+
     @Override
     public void onEnable() {
         setupManagers();
@@ -51,16 +62,66 @@ public final class VLandsUtilities extends JavaPlugin {
     private void setupManagers() {
         dataStorageManager = new SQLiteStorageManager(new File(this.getDataFolder(), "database.db"));
         dataStorageManager.init();
+
         playerDataManager = new PlayerDataManager(this);
         Bukkit.getPluginManager().registerEvents(playerDataManager, this);
+
         cooldownManager = new CooldownManager(this);
-        effectsManager = new EffectsManager(this);
-        complexEffectsManager = new EffectManager(this);
         kitManager = new KitManager(this);
 
         skillManager = new SkillManager(this);
 
-        if (setupEconomy()) vaultManager = new VaultManager(this, getEconomy());
+        if (setupEconomy()) {
+            vaultManager = new VaultManager(this, getEconomy());
+            GenericUtils.log("Vault Dependency found, hooking onto Economy");
+            hasVault = true;
+        } else {
+            GenericUtils.sendWarning("No Vault Dependency found, Economy is disabled.");
+        }
+
+        if (hasPlugin("StatsSB")) {
+            GenericUtils.log("StatsSB Dependency found, hooking onto Statistics + Combat Tags + Bow Accuracy");
+            hasStatsSB = true;
+        } else {
+            GenericUtils.sendWarning("No StatsSB Dependency found, Statistics + Combat Tags + Bow Accuracy are disabled.");
+        }
+
+        if (hasPlugin("PlaceholderAPI")) {
+            GenericUtils.log("PlaceholderAPI Dependency found, hooking onto Placeholders");
+            hasPlaceholderAPI = true;
+        } else {
+            GenericUtils.sendWarning("No PlaceholderAPI Dependency found, Placeholder support is disabled.");
+        }
+
+        if (hasPlugin("EffectLib")) {
+            GenericUtils.log("EffectLib Dependency found, hooking onto Effects");
+            effectsManager = new EffectsManager(this);
+            complexEffectsManager = new EffectManager(this);
+            hasEffectLib = true;
+        } else {
+            GenericUtils.sendWarning("No EffectLib Dependency found, KillEffects + Several custom items disabled.");
+        }
+
+        if (hasPlugin("EssentialsX")) {
+            if (hasPlugin("AquaCore")) {
+                GenericUtils.log("AquaCore Dependency found, hooking onto API (Display name formatting).");
+                GenericUtils.log("EssentialsX display name formatting disabled due to AquaCore override.");
+                hasAquaCore = true;
+            } else {
+                GenericUtils.log("EssentialsX Dependency found, hooking onto API (Display name formatting).");
+                essentials = (IEssentials) getServer().getPluginManager().getPlugin("EssentialsX");
+                hasEssentialsX = true;
+            }
+        } else {
+            if (hasPlugin("AquaCore")) {
+                GenericUtils.log("AquaCore Dependency found, hooking onto API (Display name formatting).");
+                hasAquaCore = true;
+            }
+        }
+    }
+
+    private boolean hasPlugin(String plugin) {
+        return getServer().getPluginManager().getPlugin(plugin) != null;
     }
 
     private boolean setupEconomy() {
