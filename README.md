@@ -31,6 +31,7 @@ Todo Layout:
         - Get a life
 
 To-do:
+  - TRANSFER BLOCKDECAY PLUGIN INTO MAIN KITPVP PLUGIN (Compatibility issues fix)
   - Configuration Files
   - Disable Features function
   - Debug Mode - GenericUtils.debug()
