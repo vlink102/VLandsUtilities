@@ -19,6 +19,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.units.qual.A;
 import revxrsal.commands.CommandHandler;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
@@ -26,11 +27,22 @@ import revxrsal.commands.command.ArgumentStack;
 import revxrsal.commands.process.ValueResolver;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class VLandsUtilities extends JavaPlugin {
+
+
+    public static final String VAULT = "Vault";
+    public static final String STATSSB = "StatsSB";
+    public static final String PLACEHOLDERAPI = "PlaceholderAPI";
+    public static final String EFFECTLIB = "EffectLib";
+    public static final String ESSENTIALSX = "EssentialsX";
+    public static final String AQUACORE = "AquaCore";
 
     @Getter private PlayerDataManager playerDataManager;
     @Getter private DataStorageManager dataStorageManager;
@@ -44,12 +56,8 @@ public final class VLandsUtilities extends JavaPlugin {
     @Getter private VaultManager vaultManager;
     @Getter private Economy economy;
 
-    public boolean hasVault = false;
-    public boolean hasStatsSB = false;
-    public boolean hasPlaceholderAPI = false;
-    public boolean hasEffectLib = false;
-    public boolean hasAquaCore = false;
-    public boolean hasEssentialsX = false;
+    @Getter private HashMap<String, Object> apis;
+    @Getter private HashMap<String, Boolean> pluginMap;
 
     @Getter private IEssentials essentials;
 
@@ -71,51 +79,55 @@ public final class VLandsUtilities extends JavaPlugin {
 
         skillManager = new SkillManager(this);
 
+        pluginMap.put(VAULT, hasPlugin(VAULT));
+        pluginMap.put(STATSSB, hasPlugin(STATSSB));
+        pluginMap.put(PLACEHOLDERAPI, hasPlugin(PLACEHOLDERAPI));
+        pluginMap.put(EFFECTLIB, hasPlugin(EFFECTLIB));
+
         if (setupEconomy()) {
             vaultManager = new VaultManager(this, getEconomy());
             GenericUtils.log("Vault Dependency found, hooking onto Economy");
-            hasVault = true;
         } else {
             GenericUtils.sendWarning("No Vault Dependency found, Economy is disabled.");
         }
-
         if (hasPlugin("StatsSB")) {
             GenericUtils.log("StatsSB Dependency found, hooking onto Statistics + Combat Tags + Bow Accuracy");
-            hasStatsSB = true;
         } else {
             GenericUtils.sendWarning("No StatsSB Dependency found, Statistics + Combat Tags + Bow Accuracy are disabled.");
         }
-
         if (hasPlugin("PlaceholderAPI")) {
             GenericUtils.log("PlaceholderAPI Dependency found, hooking onto Placeholders");
-            hasPlaceholderAPI = true;
         } else {
             GenericUtils.sendWarning("No PlaceholderAPI Dependency found, Placeholder support is disabled.");
         }
-
         if (hasPlugin("EffectLib")) {
             GenericUtils.log("EffectLib Dependency found, hooking onto Effects");
             effectsManager = new EffectsManager(this);
             complexEffectsManager = new EffectManager(this);
-            hasEffectLib = true;
         } else {
             GenericUtils.sendWarning("No EffectLib Dependency found, KillEffects + Several custom items disabled.");
         }
+
+        pluginMap.put(ESSENTIALSX, false);
+        pluginMap.put(AQUACORE, false);
 
         if (hasPlugin("EssentialsX")) {
             if (hasPlugin("AquaCore")) {
                 GenericUtils.log("AquaCore Dependency found, hooking onto API (Display name formatting).");
                 GenericUtils.log("EssentialsX display name formatting disabled due to AquaCore override.");
-                hasAquaCore = true;
+
+                pluginMap.put(AQUACORE, true);
+                pluginMap.put(ESSENTIALSX, false);
             } else {
                 GenericUtils.log("EssentialsX Dependency found, hooking onto API (Display name formatting).");
                 essentials = (IEssentials) getServer().getPluginManager().getPlugin("EssentialsX");
-                hasEssentialsX = true;
+
+                pluginMap.put(ESSENTIALSX, true);
             }
         } else {
             if (hasPlugin("AquaCore")) {
                 GenericUtils.log("AquaCore Dependency found, hooking onto API (Display name formatting).");
-                hasAquaCore = true;
+                pluginMap.put(AQUACORE, true);
             }
         }
     }
@@ -125,7 +137,7 @@ public final class VLandsUtilities extends JavaPlugin {
     }
 
     private boolean setupEconomy() {
-        if (Bukkit.getPluginManager().getPlugin("Vault") == null) return false;
+        if (!hasPlugin(VAULT)) return false;
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) return false;
         economy = rsp.getProvider();

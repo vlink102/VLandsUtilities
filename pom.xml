@@ -153,5 +153,14 @@
             <version>2.19.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- APIs (External Jars) -->
+        <dependency>
+            <groupId>AquaCoreAPI</groupId>
+            <artifactId>AquaCoreAPI</artifactId>
+            <version>2.6.22</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/libs/AquaCoreAPI.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>
