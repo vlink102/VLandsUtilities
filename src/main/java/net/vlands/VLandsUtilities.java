@@ -1,8 +1,11 @@
 package net.vlands;
 
 import com.earth2me.essentials.IEssentials;
+import de.slikey.effectlib.EffectLib;
 import de.slikey.effectlib.EffectManager;
+import io.aquaticlabs.statssb.StatsSBAPI;
 import lombok.Getter;
+import me.activated.core.plugin.AquaCoreAPI;
 import net.milkbowl.vault.economy.Economy;
 import net.vlands.commands.KitCommands;
 import net.vlands.data.CooldownManager;
@@ -92,6 +95,7 @@ public final class VLandsUtilities extends JavaPlugin {
         }
         if (hasPlugin("StatsSB")) {
             GenericUtils.log("StatsSB Dependency found, hooking onto Statistics + Combat Tags + Bow Accuracy");
+            apis.put(STATSSB, StatsSBAPI.getAPI().getClass());
         } else {
             GenericUtils.sendWarning("No StatsSB Dependency found, Statistics + Combat Tags + Bow Accuracy are disabled.");
         }
@@ -118,6 +122,8 @@ public final class VLandsUtilities extends JavaPlugin {
 
                 pluginMap.put(AQUACORE, true);
                 pluginMap.put(ESSENTIALSX, false);
+
+                apis.put(AQUACORE, AquaCoreAPI.INSTANCE);
             } else {
                 GenericUtils.log("EssentialsX Dependency found, hooking onto API (Display name formatting).");
                 essentials = (IEssentials) getServer().getPluginManager().getPlugin("EssentialsX");
@@ -154,8 +160,6 @@ public final class VLandsUtilities extends JavaPlugin {
         });
         commandHandler.register(new KitCommands());
 
-
-        //last thing to do
         ((BukkitCommandHandler) commandHandler).registerBrigadier();
     }
 }

@@ -162,5 +162,12 @@
             <scope>system</scope>
             <systemPath>${basedir}/src/libs/AquaCoreAPI.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>StatsSBAPI</groupId>
+            <artifactId>StatsSBAPI</artifactId>
+            <version>4.0.17-PREMIUM</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/libs/StatsSB-4.0.17-Premium.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>
