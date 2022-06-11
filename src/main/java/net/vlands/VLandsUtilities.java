@@ -1,7 +1,5 @@
 package net.vlands;
 
-import com.earth2me.essentials.IEssentials;
-import de.slikey.effectlib.EffectLib;
 import de.slikey.effectlib.EffectManager;
 import io.aquaticlabs.statssb.StatsSBAPI;
 import lombok.Getter;
@@ -16,13 +14,14 @@ import net.vlands.death.managers.SkillManager;
 import net.vlands.death.managers.VaultManager;
 import net.vlands.effect.EffectsManager;
 import net.vlands.kits.KitManager;
-import net.vlands.util.GenericUtils;
+import net.vlands.util.internal.ClassEnumerator;
+import net.vlands.util.internal.DynamicThreadWalker;
+import net.vlands.util.internal.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.units.qual.A;
 import revxrsal.commands.CommandHandler;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
@@ -30,15 +29,14 @@ import revxrsal.commands.command.ArgumentStack;
 import revxrsal.commands.process.ValueResolver;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class VLandsUtilities extends JavaPlugin {
 
+    @Getter private static VLandsUtilities instance;
 
     public static final String VAULT = "Vault";
     public static final String STATSSB = "StatsSB";
@@ -62,25 +60,47 @@ public final class VLandsUtilities extends JavaPlugin {
     @Getter private HashMap<String, Object> apis;
     @Getter private HashMap<String, Boolean> pluginMap;
 
-    @Getter private IEssentials essentials;
+    @Getter private Logger logger;
 
     @Override
     public void onEnable() {
+        instance = this;
+
+        logger = new Logger(this);
+
+        logger.coloredLog("&9&m─────── &r&6VLands Utilities &9&m──────");
         setupManagers();
+        logger.log(" > Passed manager setup stage");
         setupCommands();
+        logger.log(" > Passed command setup stage");
+        logger.log("Plugin successfully initialized!");
+    }
+
+    @Override
+    public void onDisable() {
+        instance = null;
     }
 
     private void setupManagers() {
+
         dataStorageManager = new SQLiteStorageManager(new File(this.getDataFolder(), "database.db"));
         dataStorageManager.init();
+        logger.coloredLog("&eData storage manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
 
         playerDataManager = new PlayerDataManager(this);
         Bukkit.getPluginManager().registerEvents(playerDataManager, this);
+        logger.coloredLog("&ePlayer data manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
 
         cooldownManager = new CooldownManager(this);
+        logger.coloredLog("&eCooldown manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
+
         kitManager = new KitManager(this);
+        logger.coloredLog("&eKit manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
 
         skillManager = new SkillManager(this);
+        logger.coloredLog("&eSkill manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
+
+// log contd
 
         pluginMap.put(VAULT, hasPlugin(VAULT));
         pluginMap.put(STATSSB, hasPlugin(STATSSB));
@@ -89,27 +109,29 @@ public final class VLandsUtilities extends JavaPlugin {
 
         if (setupEconomy()) {
             vaultManager = new VaultManager(this, getEconomy());
-            GenericUtils.log("Vault Dependency found, hooking onto Economy");
+            logger.log("Vault Dependency found, hooking onto Economy");
         } else {
-            GenericUtils.sendWarning("No Vault Dependency found, Economy is disabled.");
+            logger.warn("No Vault Dependency found, Economy is disabled.");
         }
         if (hasPlugin("StatsSB")) {
-            GenericUtils.log("StatsSB Dependency found, hooking onto Statistics + Combat Tags + Bow Accuracy");
+            logger.log("StatsSB Dependency found, hooking onto Statistics + Combat Tags + Bow Accuracy");
             apis.put(STATSSB, StatsSBAPI.getAPI().getClass());
         } else {
-            GenericUtils.sendWarning("No StatsSB Dependency found, Statistics + Combat Tags + Bow Accuracy are disabled.");
+            logger.warn("No StatsSB Dependency found, Statistics + Combat Tags + Bow Accuracy are disabled.");
         }
         if (hasPlugin("PlaceholderAPI")) {
-            GenericUtils.log("PlaceholderAPI Dependency found, hooking onto Placeholders");
+            logger.log("PlaceholderAPI Dependency found, hooking onto Placeholders");
         } else {
-            GenericUtils.sendWarning("No PlaceholderAPI Dependency found, Placeholder support is disabled.");
+            logger.warn("No PlaceholderAPI Dependency found, Placeholder support is disabled.");
         }
         if (hasPlugin("EffectLib")) {
-            GenericUtils.log("EffectLib Dependency found, hooking onto Effects");
+            logger.log("EffectLib Dependency found, hooking onto Effects");
             effectsManager = new EffectsManager(this);
             complexEffectsManager = new EffectManager(this);
+            effectsManager.registerAllEffects();
+            logger.log("All effects Loaded Successfully!");
         } else {
-            GenericUtils.sendWarning("No EffectLib Dependency found, KillEffects + Several custom items disabled.");
+            logger.warn("No EffectLib Dependency found, KillEffects + Several custom items disabled.");
         }
 
         pluginMap.put(ESSENTIALSX, false);
@@ -117,22 +139,22 @@ public final class VLandsUtilities extends JavaPlugin {
 
         if (hasPlugin("EssentialsX")) {
             if (hasPlugin("AquaCore")) {
-                GenericUtils.log("AquaCore Dependency found, hooking onto API (Display name formatting).");
-                GenericUtils.log("EssentialsX display name formatting disabled due to AquaCore override.");
+                logger.log("AquaCore Dependency found, hooking onto API (Display name formatting).");
+                logger.log("EssentialsX display name formatting disabled due to AquaCore override.");
 
                 pluginMap.put(AQUACORE, true);
                 pluginMap.put(ESSENTIALSX, false);
 
                 apis.put(AQUACORE, AquaCoreAPI.INSTANCE);
             } else {
-                GenericUtils.log("EssentialsX Dependency found, hooking onto API (Display name formatting).");
-                essentials = (IEssentials) getServer().getPluginManager().getPlugin("EssentialsX");
+                logger.log("EssentialsX Dependency found, hooking onto API (Display name formatting).");
+                apis.put(ESSENTIALSX, getServer().getPluginManager().getPlugin(ESSENTIALSX));
 
                 pluginMap.put(ESSENTIALSX, true);
             }
         } else {
             if (hasPlugin("AquaCore")) {
-                GenericUtils.log("AquaCore Dependency found, hooking onto API (Display name formatting).");
+                logger.log("AquaCore Dependency found, hooking onto API (Display name formatting).");
                 pluginMap.put(AQUACORE, true);
             }
         }
@@ -140,6 +162,10 @@ public final class VLandsUtilities extends JavaPlugin {
 
     private boolean hasPlugin(String plugin) {
         return getServer().getPluginManager().getPlugin(plugin) != null;
+    }
+
+    public boolean hasDependency(String plugin) {
+        return pluginMap.getOrDefault(plugin, false);
     }
 
     private boolean setupEconomy() {

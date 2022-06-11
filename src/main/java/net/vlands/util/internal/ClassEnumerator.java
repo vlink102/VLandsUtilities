@@ -1,4 +1,4 @@
-package net.vlands.util;
+package net.vlands.util.internal;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +11,15 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class ClassEnumerator {
+
+    public static String getCurrentClassName(Class<?> clazz) {
+        Class<?> enclosingClass = clazz.getEnclosingClass();
+        if (enclosingClass != null) {
+            return enclosingClass.getName();
+        } else {
+             return clazz.getName();
+        }
+    }
 
     private static final String CLASS_SUFFIX = ".class";
 

@@ -1,4 +1,4 @@
-package net.vlands.util;
+package net.vlands.util.internal;
 
 import java.util.ArrayList;
 import java.util.List;

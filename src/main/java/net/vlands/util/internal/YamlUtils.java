@@ -1,4 +1,4 @@
-package net.vlands.util;
+package net.vlands.util.internal;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.Pattern;
@@ -41,8 +41,7 @@ public class YamlUtils {
             document.save();
             return document;
         } catch (IOException e) {
-            e.printStackTrace();
-            GenericUtils.sendError("Failed to create/update/reload configuration file '" + fileName + "' at location '" + path + "' using input stream '" + inputStream + "'.");
+            VLandsUtilities.getInstance().getLogger().error("Failed to create/update/reload configuration file '" + fileName + "' at location '" + path + "' using input stream '" + inputStream + "'.", e);
             return null;
         }
     }

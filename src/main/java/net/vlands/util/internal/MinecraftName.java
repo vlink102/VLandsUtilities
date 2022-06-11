@@ -1,4 +1,4 @@
-package net.vlands.util;
+package net.vlands.util.internal;
 
 @SuppressWarnings("unused")
 public class MinecraftName {

@@ -1,7 +1,7 @@
 package net.vlands.effect;
 
 import lombok.Getter;
-import org.bukkit.ChatColor;
+import net.vlands.util.ui.ColorUtils;
 import org.bukkit.entity.Player;
 
 @Getter
@@ -13,8 +13,8 @@ public abstract class Effect {
 
     public Effect(String name, String fancyName){
         this.name = name;
-        this.fancyName = ChatColor.translateAlternateColorCodes('&',fancyName);
-        this.rawName = ChatColor.stripColor(fancyName);
+        this.fancyName = ColorUtils.toColors(fancyName);
+        this.rawName = ColorUtils.removeColors(fancyName);
     }
 
     public abstract void playEffect(Player killer, Player victim);

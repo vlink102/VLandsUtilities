@@ -1,4 +1,4 @@
-package net.vlands.util;
+package net.vlands.util.internal;
 
 import java.util.Map;
 import java.util.Objects;

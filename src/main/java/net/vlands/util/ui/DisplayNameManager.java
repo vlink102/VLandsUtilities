@@ -1,4 +1,4 @@
-package net.vlands.util;
+package net.vlands.util.ui;
 
 import net.vlands.VLandsUtilities;
 import org.bukkit.entity.Player;
@@ -11,6 +11,7 @@ public class DisplayNameManager {
     }
 
     public String convertFull(Player player) {
+
         if (plugin.hasAquaCore) {
             // Aqua code
         }

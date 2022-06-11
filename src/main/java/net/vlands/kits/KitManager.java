@@ -1,17 +1,12 @@
 package net.vlands.kits;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
 import net.vlands.VLandsUtilities;
-import net.vlands.util.GenericUtils;
-import net.vlands.util.Verify;
-import net.vlands.util.YamlUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +35,7 @@ public class KitManager {
                 this.plugin.getLogger().info("Loaded kit: " + name);
             } catch (IOException | InvalidConfigurationException e) {
                 e.printStackTrace();
-                this.plugin.getLogger().warning("There was an error loading the kit named: " + name);
+                this.plugin.getLogger().warn("There was an error loading the kit named: " + name);
             }
         }
     }

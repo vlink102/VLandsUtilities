@@ -2,7 +2,7 @@ package net.vlands.commands;
 
 import net.vlands.VLandsUtilities;
 import net.vlands.kits.Kit;
-import org.bukkit.ChatColor;
+import net.vlands.util.ui.ColorUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import revxrsal.commands.annotation.Command;
@@ -24,7 +24,7 @@ public class KitCommands {
     @Subcommand("create") // TODO idk how to use subcommands in lamp there isnt many examples.
     @CommandPermission("vlands.commands.createkit")
     public void createKit(Player player,@Named("internal name") String internalName, @Named("cost") Double cost, @Named("formatted name") ArgumentStack stack) {
-        String formattedName = ChatColor.translateAlternateColorCodes('&', stack.join(" "));
+        String formattedName = ColorUtils.toColors(stack.join(" "));
         if (formattedName.equals("") || internalName.equals("")) return;
 
         List<PotionEffect> effectList = new ArrayList<>(player.getActivePotionEffects());
