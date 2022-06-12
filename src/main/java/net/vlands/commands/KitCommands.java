@@ -2,7 +2,7 @@ package net.vlands.commands;
 
 import net.vlands.VLandsUtilities;
 import net.vlands.kits.Kit;
-import net.vlands.util.ui.ColorUtils;
+import net.vlands.util.internal.bukkit.ui.ColorUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import revxrsal.commands.annotation.Command;

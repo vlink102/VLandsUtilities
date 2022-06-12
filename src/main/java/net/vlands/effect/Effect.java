@@ -1,7 +1,7 @@
 package net.vlands.effect;
 
 import lombok.Getter;
-import net.vlands.util.ui.ColorUtils;
+import net.vlands.util.internal.bukkit.ui.ColorUtils;
 import org.bukkit.entity.Player;
 
 @Getter

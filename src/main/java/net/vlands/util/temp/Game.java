@@ -1,7 +1,8 @@
-package net.vlands.util.ui;
+package net.vlands.util.temp;
 
 import net.vlands.VLandsUtilities;
 import net.vlands.util.internal.bukkit.BukkitUtils;
+import net.vlands.util.internal.bukkit.ui.ColorUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

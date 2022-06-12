@@ -1,4 +1,4 @@
-package net.vlands.util.internal;
+package net.vlands.util.internal.bukkit;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.Pattern;

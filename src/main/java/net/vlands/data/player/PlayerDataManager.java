@@ -2,8 +2,8 @@ package net.vlands.data.player;
 
 import net.vlands.VLandsUtilities;
 import net.vlands.data.player.PlayerData.PlayerDataSnapShot;
+import net.vlands.util.internal.bukkit.ui.MinecraftName;
 import net.vlands.util.internal.java.Callback;
-import net.vlands.util.internal.bukkit.MinecraftName;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -1,4 +1,4 @@
-package net.vlands.util.ui;
+package net.vlands.util.internal.bukkit.ui;
 
 import org.bukkit.ChatColor;
 

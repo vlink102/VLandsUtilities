@@ -1,4 +1,4 @@
-package net.vlands.util.internal.bukkit;
+package net.vlands.util.internal.bukkit.ui;
 
 @SuppressWarnings("unused")
 public class MinecraftName {
