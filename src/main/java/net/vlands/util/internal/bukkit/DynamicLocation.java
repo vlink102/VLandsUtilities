@@ -1,4 +1,4 @@
-package net.vlands.util.math;
+package net.vlands.util.internal.bukkit;
 
 import de.slikey.effectlib.util.VectorUtils;
 import org.bukkit.Location;

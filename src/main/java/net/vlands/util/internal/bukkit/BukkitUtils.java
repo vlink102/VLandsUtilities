@@ -1,4 +1,4 @@
-package net.vlands.util.internal;
+package net.vlands.util.internal.bukkit;
 
 import com.google.common.base.Charsets;
 import net.vlands.VLandsUtilities;

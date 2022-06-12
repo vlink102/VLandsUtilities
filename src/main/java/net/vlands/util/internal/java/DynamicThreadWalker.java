@@ -1,4 +1,4 @@
-package net.vlands.util.internal;
+package net.vlands.util.internal.java;
 
 public class DynamicThreadWalker {
     /** @return The line number of the code that ran this method

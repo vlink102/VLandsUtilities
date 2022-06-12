@@ -1,5 +1,6 @@
 package net.vlands;
 
+import com.earth2me.essentials.IEssentials;
 import de.slikey.effectlib.EffectManager;
 import io.aquaticlabs.statssb.StatsSBAPI;
 import lombok.Getter;
@@ -14,8 +15,9 @@ import net.vlands.death.managers.SkillManager;
 import net.vlands.death.managers.VaultManager;
 import net.vlands.effect.EffectsManager;
 import net.vlands.kits.KitManager;
-import net.vlands.util.internal.ClassEnumerator;
-import net.vlands.util.internal.DynamicThreadWalker;
+import net.vlands.util.internal.bukkit.BuildStability;
+import net.vlands.util.internal.java.ClassEnumerator;
+import net.vlands.util.internal.java.DynamicThreadWalker;
 import net.vlands.util.internal.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -38,6 +40,11 @@ public final class VLandsUtilities extends JavaPlugin {
 
     @Getter private static VLandsUtilities instance;
 
+    public static final String VERSION = "1.0.0";
+    public static final String AUTHOR = "V_Link";
+    public static final BuildStability STABILITY = BuildStability.UNFINISHED; // TODO
+    public static final String DISCORD = "https://discord.gg/NJ3ZWYE4sj";
+
     public static final String VAULT = "Vault";
     public static final String STATSSB = "StatsSB";
     public static final String PLACEHOLDERAPI = "PlaceholderAPI";
@@ -57,10 +64,12 @@ public final class VLandsUtilities extends JavaPlugin {
     @Getter private VaultManager vaultManager;
     @Getter private Economy economy;
 
-    @Getter private HashMap<String, Object> apis;
     @Getter private HashMap<String, Boolean> pluginMap;
 
     @Getter private Logger logger;
+
+    @Getter private AquaCoreAPI aquaCoreAPI;
+    @Getter private IEssentials essentials;
 
     @Override
     public void onEnable() {
@@ -85,7 +94,7 @@ public final class VLandsUtilities extends JavaPlugin {
 
         dataStorageManager = new SQLiteStorageManager(new File(this.getDataFolder(), "database.db"));
         dataStorageManager.init();
-        logger.coloredLog("&eData storage manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
+        logger.coloredLog("&d ~ &eData storage manager initialized &7(DEV: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
 
         playerDataManager = new PlayerDataManager(this);
         Bukkit.getPluginManager().registerEvents(playerDataManager, this);
@@ -99,8 +108,6 @@ public final class VLandsUtilities extends JavaPlugin {
 
         skillManager = new SkillManager(this);
         logger.coloredLog("&eSkill manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
-
-// log contd
 
         pluginMap.put(VAULT, hasPlugin(VAULT));
         pluginMap.put(STATSSB, hasPlugin(STATSSB));
@@ -145,10 +152,10 @@ public final class VLandsUtilities extends JavaPlugin {
                 pluginMap.put(AQUACORE, true);
                 pluginMap.put(ESSENTIALSX, false);
 
-                apis.put(AQUACORE, AquaCoreAPI.INSTANCE);
+                aquaCoreAPI = AquaCoreAPI.INSTANCE;
             } else {
                 logger.log("EssentialsX Dependency found, hooking onto API (Display name formatting).");
-                apis.put(ESSENTIALSX, getServer().getPluginManager().getPlugin(ESSENTIALSX));
+                essentials = (IEssentials) getServer().getPluginManager().getPlugin(ESSENTIALSX);
 
                 pluginMap.put(ESSENTIALSX, true);
             }

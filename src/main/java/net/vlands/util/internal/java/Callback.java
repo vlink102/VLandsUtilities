@@ -1,4 +1,4 @@
-package net.vlands.util.internal;
+package net.vlands.util.internal.java;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class Callback<T> {
     /**
      * Ideally this method should be called from the main thread.
      *
-     * @param result Result that is being proviaded to the callback.
+     * @param result Result that is being provided to the callback.
      */
     public void setResult(T result) {
         if (this.hasResults())

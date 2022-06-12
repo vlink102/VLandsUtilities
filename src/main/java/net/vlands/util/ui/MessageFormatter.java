@@ -4,10 +4,10 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.vlands.VLandsUtilities;
 import org.bukkit.entity.Player;
 
-public class MessageManager {
+public class MessageFormatter {
     private final VLandsUtilities plugin;
 
-    public MessageManager(VLandsUtilities plugin) {
+    public MessageFormatter(VLandsUtilities plugin) {
         this.plugin = plugin;
     }
 

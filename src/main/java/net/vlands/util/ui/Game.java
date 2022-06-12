@@ -1,7 +1,7 @@
 package net.vlands.util.ui;
 
 import net.vlands.VLandsUtilities;
-import net.vlands.util.internal.BukkitUtils;
+import net.vlands.util.internal.bukkit.BukkitUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

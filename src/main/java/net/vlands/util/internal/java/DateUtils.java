@@ -1,4 +1,4 @@
-package net.vlands.util.internal;
+package net.vlands.util.internal.java;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;

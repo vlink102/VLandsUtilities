@@ -1,4 +1,4 @@
-package net.vlands.util.internal;
+package net.vlands.util.internal.bukkit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
