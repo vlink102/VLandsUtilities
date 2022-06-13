@@ -3,9 +3,8 @@ package net.vlands.util.internal.bukkit;
 import com.google.common.base.Charsets;
 import net.vlands.VLandsUtilities;
 import net.vlands.util.math.MathUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -13,9 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -225,6 +222,46 @@ public class BukkitUtils {
         } else {
             return Bukkit.getOnlinePlayers();
         }
+    }
+
+    public static Collection<? extends Player> getGamemodePlayers(GameMode gameMode) {
+        List<Player> players = new ArrayList<>();
+        for (Player player : BukkitUtils.getOnlinePlayers()) {
+            if (Objects.equals(player.getGameMode(), gameMode)) {
+                players.add(player);
+            }
+        }
+        return players;
+    }
+
+    public static Collection<? extends Player> getWorldPlayers(World world) {
+        List<Player> players = new ArrayList<>();
+        for (Player player : BukkitUtils.getOnlinePlayers()) {
+            if (Objects.equals(player.getWorld(), world)) {
+                players.add(player);
+            }
+        }
+        return players;
+    }
+
+    public static Collection<? extends Player> getNearbyPlayers(Entity entity, Double radius) {
+        List<Player> players = new ArrayList<>();
+        for (Entity nearbyEntity : entity.getNearbyEntities(radius, radius, radius)) {
+            if (nearbyEntity instanceof Player) {
+                players.add((Player) nearbyEntity);
+            }
+        }
+        return players;
+    }
+
+    public static Collection<? extends Player> getNearbyPlayers(Location location, Double radius) {
+        List<Player> players = new ArrayList<>();
+        for (Entity nearbyEntity : location.getWorld().getNearbyEntities(location, radius, radius, radius)) {
+            if (nearbyEntity instanceof Player) {
+                players.add((Player) nearbyEntity);
+            }
+        }
+        return players;
     }
 
     /**

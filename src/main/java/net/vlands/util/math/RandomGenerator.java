@@ -3,7 +3,9 @@ package net.vlands.util.math;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SuppressWarnings("unused")
 public class RandomGenerator {
@@ -50,6 +52,17 @@ public class RandomGenerator {
 
     public static boolean checkProbability(double probability) {
         return probability >= 1 || random.nextDouble() < probability;
+    }
+
+    public static <T> T getRandomElement(List<T> list) {
+        int size = list.size();
+
+        if(size == 0) return null;
+
+        if(size == 1) return list.get(0);
+
+        Random random = ThreadLocalRandom.current();
+        return list.get(random.nextInt(size));
     }
 
     /**

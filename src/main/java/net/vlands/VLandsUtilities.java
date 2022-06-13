@@ -43,16 +43,16 @@ import java.util.stream.Collectors;
 public final class VLandsUtilities extends JavaPlugin {
 
     public static final String VERSION = "1.0.0";
-    public static final String AUTHOR = "V_Link";
+    public static final String AUTHORS = "V_Link, minion325";
     public static final BuildStability STABILITY = BuildStability.UNFINISHED; // TODO
     public static final String DISCORD = "https://discord.gg/NJ3ZWYE4sj";
 
-    public static final String VAULT = "Vault";
-    public static final String STATSSB = "StatsSB";
-    public static final String PLACEHOLDERAPI = "PlaceholderAPI";
-    public static final String EFFECTLIB = "EffectLib";
-    public static final String ESSENTIALSX = "EssentialsX";
-    public static final String AQUACORE = "AquaCore";
+    public static final String PLUGIN_VAULT = "Vault";
+    public static final String PLUGIN_STATSSB = "StatsSB";
+    public static final String PLUGIN_PLACEHOLDERAPI = "PlaceholderAPI";
+    public static final String PLUGIN_EFFECTLIB = "EffectLib";
+    public static final String PLUGIN_ESSENTIALSX = "EssentialsX";
+    public static final String PLUGIN_AQUACORE = "AquaCore";
 
     @Getter private static VLandsUtilities instance;
 
@@ -76,21 +76,22 @@ public final class VLandsUtilities extends JavaPlugin {
     @Getter private IEssentials essentials;
     @Getter private StatsSBAPI statsSBAPI;
 
-    @Getter private ConsoleCommandSender consoleSender;
+    @Getter private Logger console;
+    @Getter private ConsoleCommandSender consoleCommandSender;
 
     private HashMap<String, Boolean> pluginMap;
 
     @Override
     public void onEnable() {
         instance = this;
-        consoleSender = ColouredConsoleSender.getInstance();
+        consoleCommandSender = ColouredConsoleSender.getInstance();
 
-        logger.coloredLog("&9&m─────── &r&6VLands Utilities &9&m──────");
+        console.log(Logger.LogLevel.INFO,"&9&m─────── &r&6VLands Utilities &9&m──────");
         setupManagers();
-        logger.log(" > Passed manager setup stage");
+        console.log(Logger.LogLevel.INFO, " > Passed manager setup stage");
         setupCommands();
-        logger.log(" > Passed command setup stage");
-        logger.log("Plugin successfully initialized!");
+        console.log(Logger.LogLevel.INFO," > Passed command setup stage");
+        console.log(Logger.LogLevel.INFO,"Plugin successfully initialized!");
     }
 
     @Override
@@ -100,6 +101,7 @@ public final class VLandsUtilities extends JavaPlugin {
 
     private void setupManagers() {
 
+        // TODO log messages
         dataStorageManager = new SQLiteStorageManager(new File(this.getDataFolder(), "database.db"));
         dataStorageManager.init();
         logger.coloredLog("&d ~ &eData storage manager initialized &7(DEV: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
@@ -117,10 +119,10 @@ public final class VLandsUtilities extends JavaPlugin {
         skillManager = new SkillManager(this);
         logger.coloredLog("&eSkill manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
 
-        pluginMap.put(VAULT, hasPlugin(VAULT));
-        pluginMap.put(STATSSB, hasPlugin(STATSSB));
-        pluginMap.put(PLACEHOLDERAPI, hasPlugin(PLACEHOLDERAPI));
-        pluginMap.put(EFFECTLIB, hasPlugin(EFFECTLIB));
+        pluginMap.put(PLUGIN_VAULT, hasPlugin(PLUGIN_VAULT));
+        pluginMap.put(PLUGIN_STATSSB, hasPlugin(PLUGIN_STATSSB));
+        pluginMap.put(PLUGIN_PLACEHOLDERAPI, hasPlugin(PLUGIN_PLACEHOLDERAPI));
+        pluginMap.put(PLUGIN_EFFECTLIB, hasPlugin(PLUGIN_EFFECTLIB));
 
         if (setupEconomy()) {
             vaultManager = new VaultManager(this, getEconomy());
@@ -151,28 +153,28 @@ public final class VLandsUtilities extends JavaPlugin {
             logger.warn("No EffectLib Dependency found, KillEffects + Several custom items disabled.");
         }
 
-        pluginMap.put(ESSENTIALSX, false);
-        pluginMap.put(AQUACORE, false);
+        pluginMap.put(PLUGIN_ESSENTIALSX, false);
+        pluginMap.put(PLUGIN_AQUACORE, false);
 
         if (hasPlugin("EssentialsX")) {
             if (hasPlugin("AquaCore")) {
                 logger.log("AquaCore Dependency found, hooking onto API (Display name formatting).");
                 logger.log("EssentialsX display name formatting disabled due to AquaCore override.");
 
-                pluginMap.put(AQUACORE, true);
-                pluginMap.put(ESSENTIALSX, false);
+                pluginMap.put(PLUGIN_AQUACORE, true);
+                pluginMap.put(PLUGIN_ESSENTIALSX, false);
 
                 aquaCoreAPI = AquaCoreAPI.INSTANCE;
             } else {
                 logger.log("EssentialsX Dependency found, hooking onto API (Display name formatting).");
-                essentials = (IEssentials) getServer().getPluginManager().getPlugin(ESSENTIALSX);
+                essentials = (IEssentials) getServer().getPluginManager().getPlugin(PLUGIN_ESSENTIALSX);
 
-                pluginMap.put(ESSENTIALSX, true);
+                pluginMap.put(PLUGIN_ESSENTIALSX, true);
             }
         } else {
             if (hasPlugin("AquaCore")) {
                 logger.log("AquaCore Dependency found, hooking onto API (Display name formatting).");
-                pluginMap.put(AQUACORE, true);
+                pluginMap.put(PLUGIN_AQUACORE, true);
 
                 aquaCoreAPI = AquaCoreAPI.INSTANCE;
             }
@@ -188,7 +190,7 @@ public final class VLandsUtilities extends JavaPlugin {
     }
 
     private boolean setupEconomy() {
-        if (!hasPlugin(VAULT)) return false;
+        if (!hasPlugin(PLUGIN_VAULT)) return false;
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) return false;
         economy = rsp.getProvider();

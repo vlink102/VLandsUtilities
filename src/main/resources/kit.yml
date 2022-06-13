@@ -2,7 +2,7 @@ file-version: 1
 
 kit-name: ""
 
-cost:
+kit-cost:
   enabled: true
   amount: 0
 
