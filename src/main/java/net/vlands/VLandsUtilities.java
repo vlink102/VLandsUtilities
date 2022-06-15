@@ -37,6 +37,7 @@ import revxrsal.commands.process.ValueResolver;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,14 @@ public final class VLandsUtilities extends JavaPlugin {
     public static final String AUTHORS = "V_Link, minion325";
     public static final BuildStability STABILITY = BuildStability.UNFINISHED; // TODO
     public static final String DISCORD = "https://discord.gg/NJ3ZWYE4sj";
+
+    public static final String SERVER_KITPVP = "KitPvP";
+    public static final String SERVER_SURVIVAL = "Survival";
+    public static final String SERVER_LOBBY = "Lobby";
+
+    public static boolean isValidServer(String server) {
+        return Objects.equals(server, VLandsUtilities.SERVER_KITPVP) || Objects.equals(server, VLandsUtilities.SERVER_LOBBY) || Objects.equals(server, VLandsUtilities.SERVER_SURVIVAL);
+    }
 
     public static final String PLUGIN_VAULT = "Vault";
     public static final String PLUGIN_STATSSB = "StatsSB";

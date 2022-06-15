@@ -179,6 +179,10 @@ public class BukkitUtils {
         return (Player[]) Bukkit.getOperators().toArray();
     }
 
+    public static Collection<? extends Player> getOnlineOperators() {
+        return getAllPlayersWhere(player -> player.isOnline() && player.isOp());
+    }
+
     /**
      * Get ip
      *
@@ -205,6 +209,10 @@ public class BukkitUtils {
         return size;
     }
 
+    public static Collection<? extends Player> getPlayersWithPermission(String permission) {
+        return getAllPlayersWhere(player -> player.hasPermission(permission));
+    }
+
     public static Collection<? extends Player> getOnlinePlayers() {
         if (legacyOnlinePlayers) {
             Player[] players = {};
@@ -225,8 +233,35 @@ public class BukkitUtils {
         }
     }
 
+    public static Collection<? extends Player> getVanishedPlayers() {
+        VLandsUtilities plugin = VLandsUtilities.getInstance();
+        List<Player> playerList = new ArrayList<>();
+        if (plugin.hasDependency(VLandsUtilities.PLUGIN_AQUACORE)) playerList.addAll(getAllPlayersWhere(player -> plugin.getAquaCoreAPI().getPlayerData(player.getUniqueId()).isVanished()));
+        if (plugin.hasDependency(VLandsUtilities.PLUGIN_ESSENTIALSX)) playerList.addAll(getAllPlayersWhere(player -> plugin.getEssentials().getUserMap().getUser(player.getUniqueId()).isVanished()));
+        return playerList;
+    }
+
+    public static Collection<? extends Player> getDisguisedPlayers() {
+        VLandsUtilities plugin = VLandsUtilities.getInstance();
+        List<Player> playerList = new ArrayList<>();
+        if (plugin.hasDependency(VLandsUtilities.PLUGIN_AQUACORE)) playerList.addAll(getAllPlayersWhere(player -> plugin.getAquaCoreAPI().isDisguised(player)));
+        return playerList;
+    }
+
+    public static Collection<? extends Player> getUnHiddenPlayers() {
+        VLandsUtilities plugin = VLandsUtilities.getInstance();
+        List<Player> playerList = new ArrayList<>();
+        if (plugin.hasDependency(VLandsUtilities.PLUGIN_AQUACORE)) playerList.addAll(getAllPlayersWhere(player -> !plugin.getAquaCoreAPI().getPlayerData(player.getUniqueId()).isVanished()));
+        if (plugin.hasDependency(VLandsUtilities.PLUGIN_ESSENTIALSX)) playerList.addAll(getAllPlayersWhere(player -> !plugin.getEssentials().getUserMap().getUser(player.getUniqueId()).isVanished()));
+        return playerList;
+    }
+
     public static Collection<? extends Player> getAllPlayersWhere(Predicate<Player> filter) {
-        return Bukkit.getOnlinePlayers().stream().filter(filter).toList();
+        return getPlayersWhere(BukkitUtils.getOnlinePlayers(), filter);
+    }
+
+    public static Collection<? extends Player> getPlayersWhere(Collection<? extends Player> players, Predicate<Player> filter) {
+        return players.stream().filter(filter).toList();
     }
 
     public static Collection<? extends Player> getGameModePlayers(GameMode gameMode) {

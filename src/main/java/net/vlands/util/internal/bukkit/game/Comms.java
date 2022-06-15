@@ -33,7 +33,7 @@ public class Comms {
     }
 
     public static void sendGamemode(String message, GameMode gameMode) {
-        for (Player player : BukkitUtils.getGamemodePlayers(gameMode)) {
+        for (Player player : BukkitUtils.getGameModePlayers(gameMode)) {
             player.sendMessage(ColorUtils.toColors(message));
         }
     }
