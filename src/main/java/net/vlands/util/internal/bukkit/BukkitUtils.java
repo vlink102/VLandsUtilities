@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -224,24 +225,16 @@ public class BukkitUtils {
         }
     }
 
-    public static Collection<? extends Player> getGamemodePlayers(GameMode gameMode) {
-        List<Player> players = new ArrayList<>();
-        for (Player player : BukkitUtils.getOnlinePlayers()) {
-            if (Objects.equals(player.getGameMode(), gameMode)) {
-                players.add(player);
-            }
-        }
-        return players;
+    public static Collection<? extends Player> getAllPlayersWhere(Predicate<Player> filter) {
+        return Bukkit.getOnlinePlayers().stream().filter(filter).toList();
+    }
+
+    public static Collection<? extends Player> getGameModePlayers(GameMode gameMode) {
+        return getAllPlayersWhere(player -> player.getGameMode() == gameMode);
     }
 
     public static Collection<? extends Player> getWorldPlayers(World world) {
-        List<Player> players = new ArrayList<>();
-        for (Player player : BukkitUtils.getOnlinePlayers()) {
-            if (Objects.equals(player.getWorld(), world)) {
-                players.add(player);
-            }
-        }
-        return players;
+        return getAllPlayersWhere(player -> player.getWorld() == world);
     }
 
     public static Collection<? extends Player> getNearbyPlayers(Entity entity, Double radius) {

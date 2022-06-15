@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.vlands.data.player.PlayerData.PlayerDataSnapShot;
 import net.vlands.data.serialization.JSONSerializer;
+import net.vlands.util.internal.java.Validate;
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.*;
@@ -29,7 +30,7 @@ public class MySQLStorageManager extends DataStorageManager {
 
         this.databaseName = database;
 
-        if (!Verify.isNotNull(host, password, user, password, database))
+        if (!Validate.anyNotNull(host, password, user, password, database))
             throw new NullPointerException("Check database info in config.yml. Something is not set properly");
         Properties props = new Properties();
         props.setProperty("dataSource.serverName", host);
