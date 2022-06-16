@@ -56,7 +56,7 @@ public class BukkitUtils {
             if (gameProfileClass != null) {
                 gameProfileClassConstructor = ReflectionUtil.getConstructor(gameProfileClass, UUID.class, String.class);
             }
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
     }
     public static String getVersion() {
@@ -75,17 +75,10 @@ public class BukkitUtils {
                     versionBuild = Integer.parseInt(data[2].replace("R", "")) + 1;
                 }
             }
-            boolean latest = false;
-            if (BukkitUtils.getVersionMajor() >= 1 && BukkitUtils.getVersionMinor() >= 8) {
-                latest = true;
-            }
+            boolean latest = BukkitUtils.getVersionMajor() >= 1 && BukkitUtils.getVersionMinor() >= 8;
 
-            if (latest
-                    || BukkitUtils.getVersion().contains("v1_7_R3") || BukkitUtils.getVersion().contains("v1_7_R4")) {
-                uuidSupport = true;
-            } else {
-                uuidSupport = false;
-            }
+            uuidSupport = latest
+                    || BukkitUtils.getVersion().contains("v1_7_R3") || BukkitUtils.getVersion().contains("v1_7_R4");
             if (BukkitUtils.getVersion().contains("v1_6") || BukkitUtils.getVersion().contains("v1_7")) {
                 legacyOnlinePlayers = true;
             }
@@ -190,7 +183,7 @@ public class BukkitUtils {
      */
     public static String getIp() {
         String bukkitIP = Bukkit.getServer().getIp();
-        return (bukkitIP == null || bukkitIP == "") ? "127.0.0.1" : bukkitIP;
+        return (bukkitIP == null || bukkitIP.equals("")) ? "127.0.0.1" : bukkitIP;
     }
 
     /**
@@ -256,40 +249,32 @@ public class BukkitUtils {
         return playerList;
     }
 
-    public static Collection<? extends Player> getAllPlayersWhere(Predicate<Player> filter) {
+    private static Collection<? extends Player> getAllPlayersWhere(Predicate<Player> filter) {
         return getPlayersWhere(BukkitUtils.getOnlinePlayers(), filter);
     }
 
-    public static Collection<? extends Player> getPlayersWhere(Collection<? extends Player> players, Predicate<Player> filter) {
+    private static Collection<? extends Player> getPlayersWhere(Collection<? extends Player> players, Predicate<Player> filter) {
         return players.stream().filter(filter).toList();
     }
 
+    private static Collection<? extends Player> getPlayersFromEntities(Collection<? extends Entity> entities) {
+        return entities.stream().filter(Player.class::isInstance).map(Player.class::cast).toList();
+    }
+
     public static Collection<? extends Player> getGameModePlayers(GameMode gameMode) {
-        return getAllPlayersWhere(player -> player.getGameMode() == gameMode);
+        return getAllPlayersWhere(player -> Objects.equals(player.getGameMode(), gameMode));
     }
 
     public static Collection<? extends Player> getWorldPlayers(World world) {
-        return getAllPlayersWhere(player -> player.getWorld() == world);
+        return getAllPlayersWhere(player -> Objects.equals(player.getWorld(), world));
     }
 
     public static Collection<? extends Player> getNearbyPlayers(Entity entity, Double radius) {
-        List<Player> players = new ArrayList<>();
-        for (Entity nearbyEntity : entity.getNearbyEntities(radius, radius, radius)) {
-            if (nearbyEntity instanceof Player) {
-                players.add((Player) nearbyEntity);
-            }
-        }
-        return players;
+        return getPlayersFromEntities(entity.getNearbyEntities(radius,radius,radius));
     }
 
     public static Collection<? extends Player> getNearbyPlayers(Location location, Double radius) {
-        List<Player> players = new ArrayList<>();
-        for (Entity nearbyEntity : location.getWorld().getNearbyEntities(location, radius, radius, radius)) {
-            if (nearbyEntity instanceof Player) {
-                players.add((Player) nearbyEntity);
-            }
-        }
-        return players;
+        return getPlayersFromEntities(location.getWorld().getNearbyEntities(location, radius, radius, radius));
     }
 
     /**
@@ -336,7 +321,7 @@ public class BukkitUtils {
      */
     public static int getBukkitBuild() {
         String version = Bukkit.getVersion();
-        Pattern pattern = Pattern.compile("(b)([0-9]+)(jnks)");
+        Pattern pattern = Pattern.compile("(b)(\\d+)(jnks)");
         Matcher matcher = pattern.matcher(version);
 
         if (matcher.find()) {
@@ -348,7 +333,7 @@ public class BukkitUtils {
 
     public static int getSpigotBuild() {
         String version = Bukkit.getVersion();
-        Pattern pattern = Pattern.compile("(git-Spigot-)([0-9]+)");
+        Pattern pattern = Pattern.compile("(git-Spigot-)(\\d+)");
         Matcher matcher = pattern.matcher(version);
         if (matcher.find()) {
             return Integer.parseInt(matcher.group(2));
@@ -359,7 +344,7 @@ public class BukkitUtils {
 
     public static int getPaperSpigotBuild() {
         String version = Bukkit.getVersion();
-        Pattern pattern = Pattern.compile("(git-Paper-)([0-9]+)");
+        Pattern pattern = Pattern.compile("(git-Paper-)(\\d+)");
         Matcher matcher = pattern.matcher(version);
         if (matcher.find()) {
             return Integer.parseInt(matcher.group(2));
@@ -494,9 +479,8 @@ public class BukkitUtils {
                     .newInstance(uuid, name);
             Object serverInstance = getServerMethod
                     .invoke(minecraftServerClass);
-            OfflinePlayer player = (OfflinePlayer) ReflectionUtil.invokeMethod("getOfflinePlayer", minecraftServerClass,
+            return (OfflinePlayer) ReflectionUtil.invokeMethod("getOfflinePlayer", minecraftServerClass,
                     serverInstance, gameProfile);
-            return player;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
