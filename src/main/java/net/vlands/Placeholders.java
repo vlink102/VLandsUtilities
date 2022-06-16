@@ -10,6 +10,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.function.Supplier;
+
 public class Placeholders extends PlaceholderExpansion {
 
     private final VLandsUtilities plugin;
@@ -56,64 +59,64 @@ public class Placeholders extends PlaceholderExpansion {
     private static final String GAME = "game_";
     private static final String NETWORK = "network_";
 
+    private final HashMap<String, Supplier<Object>> placeholderMap = new HashMap<>(){{
+        this.put(SERVER + "version", BukkitUtils::getServerVersion);
+        this.put(SERVER + "version_tab", BukkitUtils::getVersion);
+        this.put(SERVER + "name", BukkitUtils::getServerName);
+        this.put(SERVER + "mod_name", BukkitUtils::getServerModName);
+        this.put(SERVER + "ip", BukkitUtils::getIp);
+        this.put(SERVER + "motd", BukkitUtils::getMotd);
+        this.put(SERVER + "port", BukkitUtils::getPort);
+        this.put(SERVER + "is_spigot", BukkitUtils::isSpigot);
+        this.put(SERVER + "bukkit_build", BukkitUtils::getBukkitBuild);
+        this.put(SERVER + "paper_build", BukkitUtils::getPaperSpigotBuild);
+        this.put(SERVER + "spigot_build", BukkitUtils::getSpigotBuild);
+        this.put(SERVER + "build", BukkitUtils::getBuild);
+        this.put(SERVER + "version_build", BukkitUtils::getVersionBuild);
+        this.put(SERVER + "max_players", BukkitUtils::getMaxPlayers);
+        this.put(SERVER + "op_count", BukkitUtils::getOPCount);
+        this.put(SERVER + "plugin_count", BukkitUtils::getPluginCount);
+        this.put(SERVER + "total_players_joined", BukkitUtils::getTotalPlayerCount);
+        this.put(SERVER + "has_whitelist", BukkitUtils::hasWhitelist);
+        this.put(SERVER + "has_uuid_support", BukkitUtils::hasUUIDSupport);
+        this.put(SERVER + "version_major", BukkitUtils::getVersionMajor);
+        this.put(SERVER + "version_minor", BukkitUtils::getVersionMinor);
+        this.put(SERVER + GAME + "online_players", () -> BukkitUtils.getOnlinePlayers().size());
+        this.put(SERVER + GAME + "online_creative", () -> BukkitUtils.getGameModePlayers(GameMode.CREATIVE).size());
+        this.put(SERVER + GAME + "online_survival", () -> BukkitUtils.getGameModePlayers(GameMode.SURVIVAL).size());
+        this.put(SERVER + GAME + "online_adventure", () -> BukkitUtils.getGameModePlayers(GameMode.ADVENTURE).size());
+        this.put(SERVER + GAME + "online_spectator", () -> BukkitUtils.getGameModePlayers(GameMode.SPECTATOR).size());
+        this.put(SERVER + GAME + "online_vanished", () -> BukkitUtils.getVanishedPlayers().size());
+        this.put(SERVER + GAME + "online_unvanished", () -> BukkitUtils.getUnHiddenPlayers().size());
+        this.put(SERVER + GAME + "online_disguised", () -> BukkitUtils.getDisguisedPlayers().size());
+        this.put(SERVER + GAME + "online_ops", BukkitUtils::getOnlineOperators);
+    }};
+
     @Override
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
         if (player == null) {
             return null;
         }
+        Object value = placeholderMap.get(params);
+        if (value != null) return value.toString();
 
-        switch (params) {
-            case SERVER + "version": return BukkitUtils.getServerVersion();
-            case SERVER + "version_tab": return BukkitUtils.getVersion();
-            case SERVER + "name": return BukkitUtils.getServerName();
-            case SERVER + "mod_name": return BukkitUtils.getServerModName();
-            case SERVER + "ip": return BukkitUtils.getIp();
-            case SERVER + "motd": return BukkitUtils.getMotd();
-            case SERVER + "port": return String.valueOf(BukkitUtils.getPort());
-            case SERVER + "is_spigot": return String.valueOf(BukkitUtils.isSpigot());
-            case SERVER + "bukkit_build": return String.valueOf(BukkitUtils.getBukkitBuild());
-            case SERVER + "paper_build": return String.valueOf(BukkitUtils.getPaperSpigotBuild());
-            case SERVER + "spigot_build": return String.valueOf(BukkitUtils.getSpigotBuild());
-            case SERVER + "build": return String.valueOf(BukkitUtils.getBuild());
-            case SERVER + "version_build": return String.valueOf(BukkitUtils.getVersionBuild());
-            case SERVER + "max_players": return String.valueOf(BukkitUtils.getMaxPlayers());
-            case SERVER + "op_count": return String.valueOf(BukkitUtils.getOPCount());
-            case SERVER + "plugin_count": return String.valueOf(BukkitUtils.getPluginCount());
-            case SERVER + "total_players_joined": return String.valueOf(BukkitUtils.getTotalPlayerCount());
-            case SERVER + "has_whitelist": return String.valueOf(BukkitUtils.hasWhitelist());
-            case SERVER + "has_uuid_support": return String.valueOf(BukkitUtils.hasUUIDSupport());
-            case SERVER + "version_major": return String.valueOf(BukkitUtils.getVersionMajor());
-            case SERVER + "version_minor": return String.valueOf(BukkitUtils.getVersionMinor());
-
-            case SERVER + GAME + "online_players": return String.valueOf(BukkitUtils.getOnlinePlayers().size());
-            case SERVER + GAME + "online_creative": return String.valueOf(BukkitUtils.getGameModePlayers(GameMode.CREATIVE).size());
-            case SERVER + GAME + "online_survival": return String.valueOf(BukkitUtils.getGameModePlayers(GameMode.SURVIVAL).size());
-            case SERVER + GAME + "online_adventure": return String.valueOf(BukkitUtils.getGameModePlayers(GameMode.ADVENTURE).size());
-            case SERVER + GAME + "online_spectator": return String.valueOf(BukkitUtils.getGameModePlayers(GameMode.SPECTATOR).size());
-            case SERVER + GAME + "online_vanished": return String.valueOf(BukkitUtils.getVanishedPlayers().size());
-            case SERVER + GAME + "online_unvanished": return String.valueOf(BukkitUtils.getUnHiddenPlayers().size());
-            case SERVER + GAME + "online_disguised": return String.valueOf(BukkitUtils.getDisguisedPlayers().size());
-            case SERVER + GAME + "online_ops": return String.valueOf(BukkitUtils.getOnlineOperators().size());
-
-            default:
-                if (params.startsWith(NETWORK)) {
-                    if (plugin.hasDependency(VLandsUtilities.PLUGIN_AQUACORE)) {
-                        AquaCoreAPI aquaCoreAPI = plugin.getAquaCoreAPI();
-                        String server = params.split("_")[1];
-                        if (VLandsUtilities.isValidServer(server)) {
-                            ServerData serverData = aquaCoreAPI.getServerData(server);
-                            String newParams = params.substring(8 /* NETWORK.length() */ + server.length());
-                            switch (newParams) {
-                                case SERVER + GAME + "online_players": return String.valueOf(serverData.getOnlinePlayers().size());
-                                case SERVER + "max_players": return String.valueOf(serverData.getMaxPlayers());
-                                case SERVER + "name": return serverData.getServerName();
-                                case SERVER + "raw_name": return server;
-                                case SERVER + "maintenance": return String.valueOf(serverData.isMaintenance());
-                                case SERVER + "whitelisted": return String.valueOf(serverData.isWhitelisted());
-                            }
-                        }
+        if (params.startsWith(NETWORK)) {
+            if (plugin.hasDependency(VLandsUtilities.PLUGIN_AQUACORE)) {
+                AquaCoreAPI aquaCoreAPI = plugin.getAquaCoreAPI();
+                String server = params.split("_")[1];
+                if (VLandsUtilities.isValidServer(server)) {
+                    ServerData serverData = aquaCoreAPI.getServerData(server);
+                    String newParams = params.substring(8 /* NETWORK.length() */ + server.length());
+                    switch (newParams) {
+                        case SERVER + GAME + "online_players": return String.valueOf(serverData.getOnlinePlayers().size());
+                        case SERVER + "max_players": return String.valueOf(serverData.getMaxPlayers());
+                        case SERVER + "name": return serverData.getServerName();
+                        case SERVER + "raw_name": return server;
+                        case SERVER + "maintenance": return String.valueOf(serverData.isMaintenance());
+                        case SERVER + "whitelisted": return String.valueOf(serverData.isWhitelisted());
                     }
                 }
+            }
         }
 
         return "null";

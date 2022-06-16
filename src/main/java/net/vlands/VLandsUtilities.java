@@ -18,10 +18,9 @@ import net.vlands.death.managers.VaultManager;
 import net.vlands.effect.EffectsManager;
 import net.vlands.kits.KitManager;
 import net.vlands.util.internal.bukkit.BuildStability;
+import net.vlands.util.internal.bukkit.ui.ColorUtils;
 import net.vlands.util.internal.bukkit.ui.ColouredConsoleSender;
 import net.vlands.util.internal.bukkit.ui.Logger;
-import net.vlands.util.internal.java.ClassEnumerator;
-import net.vlands.util.internal.java.DynamicThreadWalker;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.HumanEntity;
@@ -37,11 +36,12 @@ import revxrsal.commands.process.ValueResolver;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class VLandsUtilities extends JavaPlugin {
+
+    public static final String PLUGIN = "VLands Utilities";
 
     public static final String VERSION = "1.0.0";
     public static final String AUTHORS = "V_Link, minion325";
@@ -53,7 +53,7 @@ public final class VLandsUtilities extends JavaPlugin {
     public static final String SERVER_LOBBY = "Lobby";
 
     public static boolean isValidServer(String server) {
-        return Objects.equals(server, VLandsUtilities.SERVER_KITPVP) || Objects.equals(server, VLandsUtilities.SERVER_LOBBY) || Objects.equals(server, VLandsUtilities.SERVER_SURVIVAL);
+        return server.equalsIgnoreCase(SERVER_KITPVP) || server.equalsIgnoreCase(VLandsUtilities.SERVER_LOBBY) || server.equalsIgnoreCase(VLandsUtilities.SERVER_SURVIVAL);
     }
 
     public static final String PLUGIN_VAULT = "Vault";
@@ -62,6 +62,9 @@ public final class VLandsUtilities extends JavaPlugin {
     public static final String PLUGIN_EFFECTLIB = "EffectLib";
     public static final String PLUGIN_ESSENTIALSX = "EssentialsX";
     public static final String PLUGIN_AQUACORE = "AquaCore";
+
+    private static final String TICK = ColorUtils.toColors("&a\\u2713"); // ✓
+    private static final String CROSS = ColorUtils.toColors("&c\\u274C"); // ❌
 
     @Getter private static VLandsUtilities instance;
 
@@ -79,8 +82,6 @@ public final class VLandsUtilities extends JavaPlugin {
     @Getter private Permission permissions;
     @Getter private Chat chat;
 
-    @Getter private Logger customLogger;
-
     @Getter private AquaCoreAPI aquaCoreAPI;
     @Getter private IEssentials essentials;
     @Getter private StatsSBAPI statsSBAPI;
@@ -92,15 +93,22 @@ public final class VLandsUtilities extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        instance = this;
-        consoleCommandSender = ColouredConsoleSender.getInstance();
+        try {
+            instance = this;
+            consoleCommandSender = ColouredConsoleSender.getInstance();
+            console.devLine("Console Logger Initialized");
+            console.intrinsic("Console Command Sender", consoleCommandSender);
 
-        console.log(Logger.LogLevel.INFO,"&9&m─────── &r&6VLands Utilities &9&m──────");
-        setupManagers();
-        console.log(Logger.LogLevel.INFO, " > Passed manager setup stage");
-        setupCommands();
-        console.log(Logger.LogLevel.INFO," > Passed command setup stage");
-        console.log(Logger.LogLevel.INFO,"Plugin successfully initialized!");
+            console.log(Logger.LogLevel.INFO,"&9&m────────── &r&6VLands Utilities &9&m─────────");
+            setupManagers();
+            console.log(Logger.LogLevel.INFO, TICK + " &6Passed manager setup stage");
+            setupCommands();
+            console.log(Logger.LogLevel.INFO,TICK + " &6Passed command setup stage");
+            console.log(Logger.LogLevel.INFO,"&9&m─────────────────────────────────────────────");
+        } catch (Exception e) {
+            console.stackTrace(Logger.StackLevel.ERROR, e, null);
+            getServer().getPluginManager().disablePlugin(this);
+        }
     }
 
     @Override
@@ -109,30 +117,36 @@ public final class VLandsUtilities extends JavaPlugin {
     }
 
     private void setupManagers() {
-
-        // TODO log messages
         dataStorageManager = new SQLiteStorageManager(new File(this.getDataFolder(), "database.db"));
         dataStorageManager.init();
-        logger.coloredLog("&d ~ &eData storage manager initialized &7(DEV: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
+        console.devLine("&7Data storage manager initialized");
+        console.intrinsic("Data Storage Manager", dataStorageManager);
 
         playerDataManager = new PlayerDataManager(this);
         Bukkit.getPluginManager().registerEvents(playerDataManager, this);
-        logger.coloredLog("&ePlayer data manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
+        console.devLine("&7Player data manager initialized");
+        console.intrinsic("Player Data Manager", playerDataManager);
 
         cooldownManager = new CooldownManager(this);
-        logger.coloredLog("&eCooldown manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
+        console.devLine("&7Cooldown manager initialized");
+        console.intrinsic("Cooldown Manager", cooldownManager);
 
         kitManager = new KitManager(this);
-        logger.coloredLog("&eKit manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
+        console.devLine("&7Kit manager initialized");
+        console.intrinsic("Kit Manager", kitManager);
 
         skillManager = new SkillManager(this);
-        logger.coloredLog("&eSkill manager initialized &7(DEV~: &aClass: &7" + ClassEnumerator.getCurrentClassName(getClass()) + ", &aLine: &7" + DynamicThreadWalker.getLineNumber() + "&7)");
+        console.devLine("&7Skill manager initialized");
+        console.intrinsic("Skill Manager", skillManager);
 
         pluginMap.put(PLUGIN_VAULT, hasPlugin(PLUGIN_VAULT));
         pluginMap.put(PLUGIN_STATSSB, hasPlugin(PLUGIN_STATSSB));
         pluginMap.put(PLUGIN_PLACEHOLDERAPI, hasPlugin(PLUGIN_PLACEHOLDERAPI));
         pluginMap.put(PLUGIN_EFFECTLIB, hasPlugin(PLUGIN_EFFECTLIB));
+        console.devLine("&74 Plugin map values populated");
+        console.intrinsic("Plugin Map (4 Populated: VAULT, STATSSB, PLACEHOLDERAPI, EFFECTLIB)", pluginMap);
 
+        // TODO console logger
         if (setupEconomy()) {
             vaultManager = new VaultManager(this, getEconomy());
             setupChat();
